@@ -464,201 +464,201 @@ void doMETStudy(){
   hECALTPETEta->Divide(hECALTPEta);
   hECALTPETEta->Scale(nPassing); // Offset normalisation in formatPlot1D
   formatPlot1D(hECALTPETEta, ecalColour);
-  canvas->SaveAs("./ECAL/ECALTPETEta.pdf");
+  canvas->SaveAs("./Plots/ECAL/ECALTPETEta.pdf");
 
   hHCALTPETEta->Divide(hHCALTPEta);
   hHCALTPETEta->Scale(nPassing);
   formatPlot1D(hHCALTPETEta, hcalColour);
-  canvas->SaveAs("./HCAL/HCALTPETEta.pdf");
+  canvas->SaveAs("./Plots/HCAL/HCALTPETEta.pdf");
 
   hTowTPETEta->Divide(hAllTowEta);
   hTowTPETEta->Scale(nPassing);
   formatPlot1D(hTowTPETEta, towerColour);
-  canvas->SaveAs("towTPETEta.pdf");
+  canvas->SaveAs("./Plots/Towers/TowTPETEta.pdf");
 
   // Plot nTPs vs iEta for ECAL, HCAL and towers
   formatPlot1D(hECALTPEta, ecalColour);
-  canvas->SaveAs("./ECAL/ECALTPEta.pdf");
+  canvas->SaveAs("./Plots/ECAL/ECALTPEta.pdf");
 
   formatPlot1D(hHCALTPEta, hcalColour);
-  canvas->SaveAs("./HCAL/HCALTPEta.pdf");
+  canvas->SaveAs("./Plots/HCAL/HCALTPEta.pdf");
 
   formatPlot1D(hAllTowEta, towerColour);
-  canvas->SaveAs("TowEta.pdf");
+  canvas->SaveAs("./Plots/Towers/TowEta.pdf");
 
   // Plot TP ET vs iPhi for ECAL, EB, EE, HCAL, HB, HE, HF, tower B, tower E, TT28
   hECALTPETphi->Divide(hECALTPPhi);
   hECALTPETphi->Scale(nPassing);
   formatPlot1D(hECALTPETphi, ecalColour);
-  canvas->SaveAs("./ECAL/ECALTPETphi.pdf");
+  canvas->SaveAs("./Plots/ECAL/ECALTPETphi.pdf");
   
   hECALTPETphiEB->Divide(hECALTPPhiEB);
   hECALTPETphiEB->Scale(nPassing);
   formatPlot1D(hECALTPETphiEB, ecalColour);
-  canvas->SaveAs("./ECAL/ECALTPETphiEB.pdf");
+  canvas->SaveAs("./Plots/ECAL/ECALTPETphiEB.pdf");
 
   hECALTPETphiEE->Divide(hECALTPPhiEE);
   hECALTPETphiEE->Scale(nPassing);
   formatPlot1D(hECALTPETphiEE, ecalColour);
-  canvas->SaveAs("./ECAL/ECALTPETphiEE.pdf");
+  canvas->SaveAs("./Plots/ECAL/ECALTPETphiEE.pdf");
 
   hECALTPETphiforTT28->Divide(hECALTPPhiforTT28);
   hECALTPETphiforTT28->Scale(nPassing);
   formatPlot1D(hECALTPETphiforTT28, ecalColour);
-  canvas->SaveAs("./ECAL/ECALTPETphiforTT28.pdf");
+  canvas->SaveAs("./Plots/ECAL/ECALTPETphiforTT28.pdf");
 
   hHCALTPETphi->Divide(hHCALTPPhi);
   hHCALTPETphi->Scale(nPassing);
   formatPlot1D(hHCALTPETphi, hcalColour);
-  canvas->SaveAs("./HCAL/HCALTPETphi.pdf");
+  canvas->SaveAs("./Plots/HCAL/HCALTPETphi.pdf");
 
   hHCALTPETphiHB->Divide(hHCALTPPhiHB);
   hHCALTPETphiHB->Scale(nPassing);
   formatPlot1D(hHCALTPETphiHB, hcalColour);
-  canvas->SaveAs("./HCAL/HCALTPETphiHB.pdf");
+  canvas->SaveAs("./Plots/HCAL/HCALTPETphiHB.pdf");
 
   hHCALTPETphiHE->Divide(hHCALTPPhiHE);
   hHCALTPETphiHE->Scale(nPassing);
   formatPlot1D(hHCALTPETphiHE, hcalColour);
-  canvas->SaveAs("./HCAL/HCALTPETphiHE.pdf");
+  canvas->SaveAs("./Plots/HCAL/HCALTPETphiHE.pdf");
 
   hHCALTPETphiHF->Divide(hHCALTPPhiHF);
   hHCALTPETphiHF->Scale(nPassing);
   formatPlot1D(hHCALTPETphiHF, hcalColour);
-  canvas->SaveAs("./HCAL/HCALTPETphiHF.pdf");
+  canvas->SaveAs("./Plots/HCAL/HCALTPETphiHF.pdf");
 
   hHCALTPETphiforTT28->Divide(hHCALTPPhiforTT28);
   hHCALTPETphiforTT28->Scale(nPassing);
   formatPlot1D(hHCALTPETphiforTT28, hcalColour);
-  canvas->SaveAs("./HCAL/HCALTPETphiforTT28.pdf");
+  canvas->SaveAs("./Plots/HCAL/HCALTPETphiforTT28.pdf");
 
   hTowTPETphiB->Divide(hTowPhiB);
   hTowTPETphiB->Scale(nPassing);
   formatPlot1D(hTowTPETphiB, towerColour);
-  canvas->SaveAs("./Towers/TowTPETphiB.pdf");
+  canvas->SaveAs("./Plots/Towers/TowTPETphiB.pdf");
 
   hTowTPETphiE->Divide(hTowPhiE);
   hTowTPETphiE->Scale(nPassing);
   formatPlot1D(hTowTPETphiE, towerColour);
-  canvas->SaveAs("./Towers/TowTPETphiE.pdf");
+  canvas->SaveAs("./Plots/Towers/TowTPETphiE.pdf");
 
   // Plot nTPs vs iPhi for ECAL, EB, EE, HCAL, HB, HE, HF, tower B, tower E, TT28
   formatPlot1D(hECALTPPhi, ecalColour);
-  canvas->SaveAs("./ECAL/ECALTPPhi.pdf");
+  canvas->SaveAs("./Plots/ECAL/ECALTPPhi.pdf");
 
   formatPlot1D(hECALTPPhiEB, ecalColour);
-  canvas->SaveAs("./ECAL/ECALTPPhiEB.pdf");
+  canvas->SaveAs("./Plots/ECAL/ECALTPPhiEB.pdf");
 
   formatPlot1D(hECALTPPhiEE, ecalColour);
-  canvas->SaveAs("./ECAL/ECALTPPhiEE.pdf");
+  canvas->SaveAs("./Plots/ECAL/ECALTPPhiEE.pdf");
 
   formatPlot1D(hECALTPPhiforTT28, ecalColour);
-  canvas->SaveAs("./ECAL/ECALTPPhiforTT28.pdf");
+  canvas->SaveAs("./Plots/ECAL/ECALTPPhiforTT28.pdf");
 
   formatPlot1D(hHCALTPPhi, hcalColour);
-  canvas->SaveAs("./HCAL/HCALTPPhi.pdf");
+  canvas->SaveAs("./Plots/HCAL/HCALTPPhi.pdf");
 
   formatPlot1D(hHCALTPPhiHB, hcalColour);
-  canvas->SaveAs("./HCAL/HCALTPPhiHB.pdf");
+  canvas->SaveAs("./Plots/HCAL/HCALTPPhiHB.pdf");
 
   formatPlot1D(hHCALTPPhiHE, hcalColour);
-  canvas->SaveAs("./HCAL/HCALTPPhiHE.pdf");
+  canvas->SaveAs("./Plots/HCAL/HCALTPPhiHE.pdf");
 
   formatPlot1D(hHCALTPPhiHF, hcalColour);
-  canvas->SaveAs("./HCAL/HCALTPPhiHF.pdf");
+  canvas->SaveAs("./Plots/HCAL/HCALTPPhiHF.pdf");
 
   formatPlot1D(hHCALTPPhiforTT28, hcalColour);
-  canvas->SaveAs("./HCAL/HCALTPPhiforTT28.pdf");
+  canvas->SaveAs("./Plots/HCAL/HCALTPPhiforTT28.pdf");
 
   formatPlot1D(hTowPhiB, towerColour);
-  canvas->SaveAs("./Towers/TowPhiBarrel.pdf");
+  canvas->SaveAs("./Plots/Towers/TowPhiBarrel.pdf");
 
   formatPlot1D(hTowPhiE, towerColour);
-  canvas->SaveAs("./Towers/TowPhiEndcap.pdf");
+  canvas->SaveAs("./Plots/Towers/TowPhiEndcap.pdf");
 
   // Plot 2D TP occupancy and ET for ECAL HCAL, TT28
   formatPlot2D(hECALTPEtaPhi);
-  canvas->SaveAs("./ECAL/ECALTPEtaPhi.pdf");
+  canvas->SaveAs("./Plots/ECAL/ECALTPEtaPhi.pdf");
 
   formatPlot2D(hHCALTPEtaPhi);
-  canvas->SaveAs("./HCAL/HCALTPEtaPhi.pdf");
+  canvas->SaveAs("./Plots/HCAL/HCALTPEtaPhi.pdf");
 
   hECALavgTPETEtaPhi->Divide(hECALTPEtaPhi); // Normalise the TP ET by the number of TPs in the eta-phi bin
   formatPlot2D(hECALavgTPETEtaPhi);
-  canvas->SaveAs("./ECAL/ECALavgTPETEtaPhi.pdf");
+  canvas->SaveAs("./Plots/ECAL/ECALavgTPETEtaPhi.pdf");
 
   hHCALavgTPETEtaPhi->Divide(hHCALTPEtaPhi);
   formatPlot2D(hHCALavgTPETEtaPhi);
-  canvas->SaveAs("./HCAL/HCALavgTPETEtaPhi.pdf");
+  canvas->SaveAs("./Plots/HCAL/HCALavgTPETEtaPhi.pdf");
 
   hECALavgTPETforTT28->Divide(hECALTPEtaPhi);
   formatPlot2D(hECALavgTPETforTT28);
-  canvas->SaveAs("./ECAL/ECALavgTPETforTT28.pdf");
+  canvas->SaveAs("./Plots/ECAL/ECALavgTPETforTT28.pdf");
 
   hHCALavgTPETforTT28->Divide(hHCALTPEtaPhi);
   formatPlot2D(hHCALavgTPETforTT28);
-  canvas->SaveAs("./HCAL/HCALavgTPETforTT28.pdf");
+  canvas->SaveAs("./Plots/HCAL/HCALavgTPETforTT28.pdf");
 
   formatPlot2D(hECALavgTPETperEvEtaPhi);
-  canvas->SaveAs("./ECAL/ECALavgTPETperEvEtaPhi.pdf");
+  canvas->SaveAs("./Plots/ECAL/ECALavgTPETperEvEtaPhi.pdf");
 
   formatPlot2D(hHCALavgTPETperEvEtaPhi);
-  canvas->SaveAs("./HCAL/HCALavgTPETperEvEtaPhi.pdf");
+  canvas->SaveAs("./Plots/HCAL/HCALavgTPETperEvEtaPhi.pdf");
 
   // Plot MET Phi 1D
   formatPlot1D(hMetPhi, towerColour);
-  canvas->SaveAs("MetPhi.pdf");
+  canvas->SaveAs("./Plots/MetPhi.pdf");
 
   // Plot MET Phi 2D
   formatPlot2D(hMetPhiEcalHcal);
-  canvas->SaveAs("MetPhiEcalHcal.pdf");
+  canvas->SaveAs("./Plots/MetPhiEcalHcal.pdf");
 
   formatPlot2D(hMetPhiEcalTotal);
-  canvas->SaveAs("MetPhiEcalTotal.pdf");
+  canvas->SaveAs("./Plots/MetPhiEcalTotal.pdf");
 
   formatPlot2D(hMetPhiHcalTotal);
-  canvas->SaveAs("MetPhiHcalTotal.pdf");
+  canvas->SaveAs("./Plots/MetPhiHcalTotal.pdf");
 
   // Plot MET scalar 1D
   canvas->SetLogy(1); // Sets y-axis to log(10)
   hMetScal->Scale(nPassing);
   formatPlot1D(hMetScal, towerColour);
-  canvas->SaveAs("MetScal.pdf");
+  canvas->SaveAs("./Plots/MetScal.pdf");
   canvas->SetLogy(0); // Revert y-axis back to linear scale
 
   // Plot MET scalar 2D
   formatPlot2D(hMetScalEcalHcal);
-  canvas->SaveAs("MetScalEcalHcal.pdf");
+  canvas->SaveAs("./Plots/MetScalEcalHcal.pdf");
 
   formatPlot2D(hMetScalEcaltotal);
-  canvas->SaveAs("MetScalEcaltotal.pdf");
+  canvas->SaveAs("./Plots/MetScalEcaltotal.pdf");
 
   formatPlot2D(hMetScalHcaltotal);
-  canvas->SaveAs("MetScalHcaltotal.pdf");
+  canvas->SaveAs("./Plots/MetScalHcaltotal.pdf");
 
   // Plot ETT scalar 1D
   hEttScal->Scale(nPassing);
   formatPlot1D(hEttScal, towerColour);
-  canvas->SaveAs("EttScal.pdf");
+  canvas->SaveAs("Plots/EttScal.pdf");
 
   // Plot ETT scalar 2D
   formatPlot2D(hEttScalEcalHcal);
-  canvas->SaveAs("EttScalEcalHcal.pdf");
+  canvas->SaveAs("Plots/EttScalEcalHcal.pdf");
 
   formatPlot2D(hEttScalEcaltotal);
-  canvas->SaveAs("EttScalEcaltotal.pdf");
+  canvas->SaveAs("Plots/EttScalEcaltotal.pdf");
 
   formatPlot2D(hEttScalHcaltotal);
-  canvas->SaveAs("EttScalEHcaltotal.pdf");
+  canvas->SaveAs("Plots/EttScalEHcaltotal.pdf");
 
   // Plot histograms for individual events
   for (int x = 0; x < min(N_INDIV_EVENTS, nPassing); ++x) {
     formatPlot2D(hECALTPETEtaPhiIndiv[x]);
-    string saveNameE = "./Individual_Events/" + to_string(x) + "_ECALTPETEtaPhiIndiv.pdf";
+    string saveNameE = "./Plots/Individual_Events/" + to_string(x) + "_ECALTPETEtaPhiIndiv.pdf";
     canvas->SaveAs(saveNameE.c_str());
 
     formatPlot2D(hHCALTPETEtaPhiIndiv[x]);
-    string saveNameH = "./Individual_Events/" + to_string(x) + "_HCALTPETEtaPhiIndiv.pdf";
+    string saveNameH = "./Plots/Individual_Events/" + to_string(x) + "_HCALTPETEtaPhiIndiv.pdf";
     canvas->SaveAs(saveNameH.c_str());
   }
 
