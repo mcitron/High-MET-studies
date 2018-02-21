@@ -230,7 +230,7 @@ void doMETStudy(){
   // Number of entries to run over
   int nEvents;
   if (isTest == true) nEvents = 1000;
-  else nEvents = 1000000;
+  else nEvents = 1500000;
   
   for (Long64_t jentry = 0; jentry < nEvents; ++jentry) {
     // initialise some variables
