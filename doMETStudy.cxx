@@ -9,6 +9,8 @@
 #include <fstream>
 #include <sstream>
 #include <string>
+
+// Following headers help decode L1T ntuples
 #include "L1Trigger/L1TNtuples/interface/L1AnalysisEventDataFormat.h"
 #include "L1Trigger/L1TNtuples/interface/L1AnalysisL1UpgradeDataFormat.h"
 #include "L1Trigger/L1TNtuples/interface/L1AnalysisRecoVertexDataFormat.h"
