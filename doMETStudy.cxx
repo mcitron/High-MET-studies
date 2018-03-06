@@ -57,62 +57,63 @@ void doMETStudy(){
   vector<string> hcal;
   vector<string> ecal;
 
-  bool isTest = false;
+  bool isTest = true;
   
   // Load files
 
   if (isTest == false){
   // Default: USE FOR TOWERS
-  towers.push_back("/eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/safarzad/2017/ZeroBias/HighPU/noRECO-l1t-v96p27_NoPUS/ZeroBias8b4e1/crab_noRECO-l1t-v96p27_NoPUS__8b4e1/170915_101410/0000/L1Ntuple_*.root");
-  towers.push_back("/eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/safarzad/2017/ZeroBias/HighPU/noRECO-l1t-v96p27_NoPUS/ZeroBias8b4e2/crab_noRECO-l1t-v96p27_NoPUS__8b4e2/170915_101429/0000/L1Ntuple_*.root");
-  towers.push_back("/eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/safarzad/2017/ZeroBias/HighPU/noRECO-l1t-v96p27_NoPUS/ZeroBias8b4e3/crab_noRECO-l1t-v96p27_NoPUS__8b4e3/170915_101449/0000/L1Ntuple_*.root");
-  //  towers.push_back("root://eoscms.cern.ch//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/safarzad/2017/ZeroBias/HighPU/noRECO-l1t-v96p27_NoPUS/ZeroBias8b4e4/crab_noRECO-l1t-v96p27_NoPUS__8b4e4/170915_101249/0000/L1Ntuple_*.root");
-  //  towers.push_back("root://eoscms.cern.ch//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/safarzad/2017/ZeroBias/HighPU/noRECO-l1t-v96p27_NoPUS/ZeroBias8b4e5/crab_noRECO-l1t-v96p27_NoPUS__8b4e5/170915_101308/0000/L1Ntuple_*.root");
-  //  towers.push_back("root://eoscms.cern.ch//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/safarzad/2017/ZeroBias/HighPU/noRECO-l1t-v96p27_NoPUS/ZeroBias8b4e6/crab_noRECO-l1t-v96p27_NoPUS__8b4e6/170915_101329/0000/L1Ntuple_*.root");
-  //  towers.push_back("root://eoscms.cern.ch//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/safarzad/2017/ZeroBias/HighPU/noRECO-l1t-v96p27_NoPUS/ZeroBias8b4e7/crab_noRECO-l1t-v96p27_NoPUS__8b4e7/170915_101349/0000/L1Ntuple_*.root");
-  //  towers.push_back("root://eoscms.cern.ch//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/safarzad/2017/ZeroBias/HighPU/noRECO-l1t-v96p27_NoPUS/ZeroBias8b4e8/crab_noRECO-l1t-v96p27_NoPUS__8b4e8/170915_101509/0000/L1Ntuple_*.root");
-  //  towers.push_back("root://eoscms.cern.ch//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/safarzad/2017/ZeroBias/HighPU/noRECO-l1t-v96p27_NoPUS/ZeroBias8b4e9/crab_noRECO-l1t-v96p27_NoPUS__8b4e9/170915_101529/0000/L1Ntuple_*.root");
-  //  towers.push_back("root://eoscms.cern.ch//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/safarzad/2017/ZeroBias/HighPU/noRECO-l1t-v96p27_NoPUS/ZeroBias8b4e10/crab_noRECO-l1t-v96p27_NoPUS__8b4e10/170915_101548/0000/L1Ntuple_*.root");
+  towers.push_back("/eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/safarzad/2017/ZeroBias/HighPU/noRECO-l1t-v96p27_v7PUS/ZeroBias8b4e1/crab_noRECO-l1t-v96p27_v7PUS__8b4e1/170915_190938/0000/L1Ntuple_*.root");
+  towers.push_back("/eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/safarzad/2017/ZeroBias/HighPU/noRECO-l1t-v96p27_v7PUS/ZeroBias8b4e2/crab_noRECO-l1t-v96p27_v7PUS__8b4e2/170915_112258/0000/L1Ntuple_*.root");
+  towers.push_back("/eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/safarzad/2017/ZeroBias/HighPU/noRECO-l1t-v96p27_v7PUS/ZeroBias8b4e3/crab_noRECO-l1t-v96p27_v7PUS__8b4e3/170915_112329/0000/L1Ntuple_*.root");
+  //  towers.push_back("/eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/safarzad/2017/ZeroBias/HighPU/noRECO-l1t-v96p27_v7PUS/ZeroBias8b4e4/crab_noRECO-l1t-v96p27_v7PUS__8b4e4/170915_112025/0000/L1Ntuple_*.root");
+  //  towers.push_back("/eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/safarzad/2017/ZeroBias/HighPU/noRECO-l1t-v96p27_v7PUS/ZeroBias8b4e5/crab_noRECO-l1t-v96p27_v7PUS__8b4e5/170915_112050/0000/L1Ntuple_*.root");
+  //  towers.push_back("/eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/safarzad/2017/ZeroBias/HighPU/noRECO-l1t-v96p27_v7PUS/ZeroBias8b4e6/crab_noRECO-l1t-v96p27_v7PUS__8b4e6/170915_112113/0000/L1Ntuple_*.root");
+  //  towers.push_back("/eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/safarzad/2017/ZeroBias/HighPU/noRECO-l1t-v96p27_v7PUS/ZeroBias8b4e7/crab_noRECO-l1t-v96p27_v7PUS__8b4e7/170915_112141/0000/L1Ntuple_*.root");
+  //  towers.push_back("/eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/safarzad/2017/ZeroBias/HighPU/noRECO-l1t-v96p27_v7PUS/ZeroBias8b4e8/crab_noRECO-l1t-v96p27_v7PUS__8b4e8/170915_112355/0000/L1Ntuple_*.root");
+  //  towers.push_back("/eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/safarzad/2017/ZeroBias/HighPU/noRECO-l1t-v96p27_v7PUS/ZeroBias8b4e9/crab_noRECO-l1t-v96p27_v7PUS__8b4e9/170915_112427/0000/L1Ntuple_*.root");
+  //  towers.push_back("/eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/safarzad/2017/ZeroBias/HighPU/noRECO-l1t-v96p27_v7PUS/ZeroBias8b4e10/crab_noRECO-l1t-v96p27_v7PUS__8b4e10/170915_112501/0000/L1Ntuple_*.root");
   
   // HCAL
   hcal.push_back("/eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/safarzad/2017/ZeroBias/HighPU/noRECO-l1t-v96p27_HCAL/ZeroBias8b4e1/crab_noRECO-l1t-v96p27_HCAL__8b4e1/170922_121415/0000/L1Ntuple_*.root");
   hcal.push_back("/eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/safarzad/2017/ZeroBias/HighPU/noRECO-l1t-v96p27_HCAL/ZeroBias8b4e2/crab_noRECO-l1t-v96p27_HCAL__8b4e2/170922_121439/0000/L1Ntuple_*.root");
   hcal.push_back("/eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/safarzad/2017/ZeroBias/HighPU/noRECO-l1t-v96p27_HCAL/ZeroBias8b4e3/crab_noRECO-l1t-v96p27_HCAL__8b4e3/170922_121504/0000/L1Ntuple_*.root");
-  //  hcal.push_back("root://eoscms.cern.ch//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/safarzad/2017/ZeroBias/HighPU/noRECO-l1t-v96p27_HCAL/ZeroBias8b4e4/crab_noRECO-l1t-v96p27_HCAL__8b4e4/170922_121241/0000/L1Ntuple_*.root");
-  //  hcal.push_back("root://eoscms.cern.ch//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/safarzad/2017/ZeroBias/HighPU/noRECO-l1t-v96p27_HCAL/ZeroBias8b4e5/crab_noRECO-l1t-v96p27_HCAL__8b4e5/170922_121302/0000/L1Ntuple_*.root");
-  //  hcal.push_back("root://eoscms.cern.ch//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/safarzad/2017/ZeroBias/HighPU/noRECO-l1t-v96p27_HCAL/ZeroBias8b4e6/crab_noRECO-l1t-v96p27_HCAL__8b4e6/170922_121326/0000/L1Ntuple_*.root");
-  //  hcal.push_back("root://eoscms.cern.ch//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/safarzad/2017/ZeroBias/HighPU/noRECO-l1t-v96p27_HCAL/ZeroBias8b4e7/crab_noRECO-l1t-v96p27_HCAL__8b4e7/170922_121350/0000/L1Ntuple_*.root");
-  //  hcal.push_back("root://eoscms.cern.ch//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/safarzad/2017/ZeroBias/HighPU/noRECO-l1t-v96p27_HCAL/ZeroBias8b4e8/crab_noRECO-l1t-v96p27_HCAL__8b4e8/170922_121528/0000/L1Ntuple_*.root");
-  //  hcal.push_back("root://eoscms.cern.ch//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/safarzad/2017/ZeroBias/HighPU/noRECO-l1t-v96p27_HCAL/ZeroBias8b4e9/crab_noRECO-l1t-v96p27_HCAL__8b4e9/170922_121556/0000/L1Ntuple_*.root");
-  //  hcal.push_back("root://eoscms.cern.ch//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/safarzad/2017/ZeroBias/HighPU/noRECO-l1t-v96p27_HCAL/ZeroBias8b4e10/crab_noRECO-l1t-v96p27_HCAL__8b4e10/170922_121624/0000/L1Ntuple_*.root");
+  //  hcal.push_back("/eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/safarzad/2017/ZeroBias/HighPU/noRECO-l1t-v96p27_HCAL/ZeroBias8b4e4/crab_noRECO-l1t-v96p27_HCAL__8b4e4/170922_121241/0000/L1Ntuple_*.root");
+  //  hcal.push_back("/eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/safarzad/2017/ZeroBias/HighPU/noRECO-l1t-v96p27_HCAL/ZeroBias8b4e5/crab_noRECO-l1t-v96p27_HCAL__8b4e5/170922_121302/0000/L1Ntuple_*.root");
+  //  hcal.push_back("/eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/safarzad/2017/ZeroBias/HighPU/noRECO-l1t-v96p27_HCAL/ZeroBias8b4e6/crab_noRECO-l1t-v96p27_HCAL__8b4e6/170922_121326/0000/L1Ntuple_*.root");
+  //  hcal.push_back("/eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/safarzad/2017/ZeroBias/HighPU/noRECO-l1t-v96p27_HCAL/ZeroBias8b4e7/crab_noRECO-l1t-v96p27_HCAL__8b4e7/170922_121350/0000/L1Ntuple_*.root");
+  //  hcal.push_back("/eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/safarzad/2017/ZeroBias/HighPU/noRECO-l1t-v96p27_HCAL/ZeroBias8b4e8/crab_noRECO-l1t-v96p27_HCAL__8b4e8/170922_121528/0000/L1Ntuple_*.root");
+  //  hcal.push_back("/eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/safarzad/2017/ZeroBias/HighPU/noRECO-l1t-v96p27_HCAL/ZeroBias8b4e9/crab_noRECO-l1t-v96p27_HCAL__8b4e9/170922_121556/0000/L1Ntuple_*.root");
+  //  hcal.push_back("/eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/safarzad/2017/ZeroBias/HighPU/noRECO-l1t-v96p27_HCAL/ZeroBias8b4e10/crab_noRECO-l1t-v96p27_HCAL__8b4e10/170922_121624/0000/L1Ntuple_*.root");
   
   // ECAL
   ecal.push_back("/eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/safarzad/2017/ZeroBias/HighPU/noRECO-l1t-v96p27_ECAL/ZeroBias8b4e1/crab_noRECO-l1t-v96p27_ECAL__8b4e1/170922_105053/0000/L1Ntuple_*.root");
   ecal.push_back("/eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/safarzad/2017/ZeroBias/HighPU/noRECO-l1t-v96p27_ECAL/ZeroBias8b4e2/crab_noRECO-l1t-v96p27_ECAL__8b4e2/170922_105120/0000/L1Ntuple_*.root");
   ecal.push_back("/eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/safarzad/2017/ZeroBias/HighPU/noRECO-l1t-v96p27_ECAL/ZeroBias8b4e3/crab_noRECO-l1t-v96p27_ECAL__8b4e3/170922_105143/0000/L1Ntuple_*.root");
-  //  ecal.push_back("root://eoscms.cern.ch//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/safarzad/2017/ZeroBias/HighPU/noRECO-l1t-v96p27_ECAL/ZeroBias8b4e4/crab_noRECO-l1t-v96p27_ECAL__8b4e4/170922_104858/0000/L1Ntuple_*.root");
-  //  ecal.push_back("root://eoscms.cern.ch//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/safarzad/2017/ZeroBias/HighPU/noRECO-l1t-v96p27_ECAL/ZeroBias8b4e5/crab_noRECO-l1t-v96p27_ECAL__8b4e5/170922_104929/0000/L1Ntuple_*.root");
-  //  ecal.push_back("root://eoscms.cern.ch//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/safarzad/2017/ZeroBias/HighPU/noRECO-l1t-v96p27_ECAL/ZeroBias8b4e6/crab_noRECO-l1t-v96p27_ECAL__8b4e6/170922_104957/0000/L1Ntuple_*.root");
-  //  ecal.push_back("root://eoscms.cern.ch//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/safarzad/2017/ZeroBias/HighPU/noRECO-l1t-v96p27_ECAL/ZeroBias8b4e7/crab_noRECO-l1t-v96p27_ECAL__8b4e7/170922_105023/0000/L1Ntuple_*.root");
-  //  ecal.push_back("root://eoscms.cern.ch//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/safarzad/2017/ZeroBias/HighPU/noRECO-l1t-v96p27_ECAL/ZeroBias8b4e8/crab_noRECO-l1t-v96p27_ECAL__8b4e8/170922_105208/0000/L1Ntuple_*.root");
-  //  ecal.push_back("root://eoscms.cern.ch//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/safarzad/2017/ZeroBias/HighPU/noRECO-l1t-v96p27_ECAL/ZeroBias8b4e9/crab_noRECO-l1t-v96p27_ECAL__8b4e9/170922_105232/0000/L1Ntuple_*.root");
-  //  ecal.push_back("root://eoscms.cern.ch//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/safarzad/2017/ZeroBias/HighPU/noRECO-l1t-v96p27_ECAL/ZeroBias8b4e10/crab_noRECO-l1t-v96p27_ECAL__8b4e10/170922_105256/0000/L1Ntuple_*.root");
+  //  ecal.push_back("/eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/safarzad/2017/ZeroBias/HighPU/noRECO-l1t-v96p27_ECAL/ZeroBias8b4e4/crab_noRECO-l1t-v96p27_ECAL__8b4e4/170922_104858/0000/L1Ntuple_*.root");
+  //  ecal.push_back("/eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/safarzad/2017/ZeroBias/HighPU/noRECO-l1t-v96p27_ECAL/ZeroBias8b4e5/crab_noRECO-l1t-v96p27_ECAL__8b4e5/170922_104929/0000/L1Ntuple_*.root");
+  //  ecal.push_back("/eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/safarzad/2017/ZeroBias/HighPU/noRECO-l1t-v96p27_ECAL/ZeroBias8b4e6/crab_noRECO-l1t-v96p27_ECAL__8b4e6/170922_104957/0000/L1Ntuple_*.root");
+  //  ecal.push_back("/eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/safarzad/2017/ZeroBias/HighPU/noRECO-l1t-v96p27_ECAL/ZeroBias8b4e7/crab_noRECO-l1t-v96p27_ECAL__8b4e7/170922_105023/0000/L1Ntuple_*.root");
+  //  ecal.push_back("/eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/safarzad/2017/ZeroBias/HighPU/noRECO-l1t-v96p27_ECAL/ZeroBias8b4e8/crab_noRECO-l1t-v96p27_ECAL__8b4e8/170922_105208/0000/L1Ntuple_*.root");
+  //  ecal.push_back("/eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/safarzad/2017/ZeroBias/HighPU/noRECO-l1t-v96p27_ECAL/ZeroBias8b4e9/crab_noRECO-l1t-v96p27_ECAL__8b4e9/170922_105232/0000/L1Ntuple_*.root");
+  //  ecal.push_back("/eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/safarzad/2017/ZeroBias/HighPU/noRECO-l1t-v96p27_ECAL/ZeroBias8b4e10/crab_noRECO-l1t-v96p27_ECAL__8b4e10/170922_105256/0000/L1Ntuple_*.root");
   }
 
   else {
   // Load these files instead when testing
-  towers.push_back("root://eoscms.cern.ch//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/safarzad/2017/ZeroBias/HighPU/noRECO-l1t-v96p27_NoPUS/ZeroBias8b4e1/crab_noRECO-l1t-v96p27_NoPUS__8b4e1/170915_101410/0000/L1Ntuple_6.root");
-  hcal.push_back("root://eoscms.cern.ch//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/safarzad/2017/ZeroBias/HighPU/noRECO-l1t-v96p27_HCAL/ZeroBias8b4e1/crab_noRECO-l1t-v96p27_HCAL__8b4e1/170922_121415/0000/L1Ntuple_6.root");
-  ecal.push_back("root://eoscms.cern.ch//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/safarzad/2017/ZeroBias/HighPU/noRECO-l1t-v96p27_ECAL/ZeroBias8b4e1/crab_noRECO-l1t-v96p27_ECAL__8b4e1/170922_105053/0000/L1Ntuple_6.root");
+  towers.push_back("/eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/safarzad/2017/ZeroBias/HighPU/noRECO-l1t-v96p27_v7PUS/ZeroBias8b4e1/crab_noRECO-l1t-v96p27_v7PUS__8b4e1/170915_190938/0000/L1Ntuple_6.root");
+  hcal.push_back("/eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/safarzad/2017/ZeroBias/HighPU/noRECO-l1t-v96p27_HCAL/ZeroBias8b4e1/crab_noRECO-l1t-v96p27_HCAL__8b4e1/170922_121415/0000/L1Ntuple_6.root");
+  ecal.push_back("/eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/safarzad/2017/ZeroBias/HighPU/noRECO-l1t-v96p27_ECAL/ZeroBias8b4e1/crab_noRECO-l1t-v96p27_ECAL__8b4e1/170922_105053/0000/L1Ntuple_6.root");
   }
 
   cout << "Loading up the TChain..." << endl;
+  // If using l1UpgradeTree, plots will be with pileup subtraction. If using l1UpgradeEmuTree, plots will be without PUS.
   TChain * eventTree = new TChain("l1EventTree/L1EventTree");
-  TChain * treeL1Towemu = new TChain("l1CaloTowerEmuTree/L1CaloTowerTree");
-  TChain * treeTPemu = new TChain("l1CaloTowerEmuTree/L1CaloTowerTree");
-  TChain * treeL1emu = new TChain("l1UpgradeEmuTree/L1UpgradeTree");
-  TChain * treeL1HCALemu = new TChain("l1UpgradeEmuTree/L1UpgradeTree");
-  TChain * treeL1ECALemu = new TChain("l1UpgradeEmuTree/L1UpgradeTree");
+  TChain * treeL1Towemu = new TChain("l1CaloTowerTree/L1CaloTowerTree");
+  TChain * treeTPemu = new TChain("l1CaloTowerTree/L1CaloTowerTree");
+  TChain * treeL1emu = new TChain("l1UpgradeTree/L1UpgradeTree");
+  TChain * treeL1HCALemu = new TChain("l1UpgradeTree/L1UpgradeTree");
+  TChain * treeL1ECALemu = new TChain("l1UpgradeTree/L1UpgradeTree");
   
   int minFiles = std::min( std::min( towers.size(), hcal.size() ), ecal.size() );
 
@@ -281,7 +282,7 @@ void doMETStudy(){
     for (unsigned int c = 0; c < l1emu_->nSums; ++c) {
       if( l1emu_->sumBx[c] != 0 ) continue;
       if( l1emu_->sumType[c] == L1Analysis::kTotalEt ) l1EttEmu = l1emu_->sumEt[c];
-      if( l1emu_->sumType[c] == L1Analysis::kMissingEt ) {
+      if( l1emu_->sumType[c] == L1Analysis::kMissingEtHF ) {
 	      l1MetEmu = l1emu_->sumEt[c];
         l1MetPhiEmu = l1emu_->sumIPhi[c];
       }
@@ -298,7 +299,7 @@ void doMETStudy(){
     for (unsigned int c = 0; c < l1HCALemu_->nSums; ++c) {
        if( l1HCALemu_->sumBx[c] != 0 ) continue;
        if( l1HCALemu_->sumType[c] == L1Analysis::kTotalEt ) l1EttHCALEmu = l1HCALemu_->sumEt[c];
-       if( l1HCALemu_->sumType[c] == L1Analysis::kMissingEt ) {
+       if( l1HCALemu_->sumType[c] == L1Analysis::kMissingEtHF ) {
 	      l1MetHCALEmu = l1HCALemu_->sumEt[c];
         if (l1MetHCALEmu > 200.) l1MetHCALEmu = 200.;
         l1MetPhiHCALEmu = l1HCALemu_->sumIPhi[c];
@@ -308,7 +309,7 @@ void doMETStudy(){
     for (unsigned int c = 0; c < l1ECALemu_->nSums; ++c) {
       if( l1ECALemu_->sumBx[c] != 0 ) continue;
       if( l1ECALemu_->sumType[c] == L1Analysis::kTotalEt ) l1EttECALEmu = l1ECALemu_->sumEt[c];
-      if( l1ECALemu_->sumType[c] == L1Analysis::kMissingEt ) {
+      if( l1ECALemu_->sumType[c] == L1Analysis::kMissingEtHF ) {
 	      l1MetECALEmu = l1ECALemu_->sumEt[c];
         if (l1MetECALEmu > 200.) l1MetECALEmu = 200.;
         l1MetPhiECALEmu = l1ECALemu_->sumIPhi[c];
