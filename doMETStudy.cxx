@@ -107,10 +107,11 @@ void doMETStudy(){
   }
 
   else {
-  // Load these files instead when testing
-    towers.push_back("/eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/treis/l1t-integration-v97p17v2-CMSSW-1000/ZeroBias/crab_l1t-integration-v97p17v2-CMSSW-1000__ZeroBias_Run2017F-v1/180302_133644/0000/L1Ntuple_6.root");
-  hcal.push_back("/eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/safarzad/2017/ZeroBias/HighPU/noRECO-l1t-v96p27_HCAL/ZeroBias8b4e1/crab_noRECO-l1t-v96p27_HCAL__8b4e1/170922_121415/0000/L1Ntuple_6.root");
-  ecal.push_back("/eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/safarzad/2017/ZeroBias/HighPU/noRECO-l1t-v96p27_ECAL/ZeroBias8b4e1/crab_noRECO-l1t-v96p27_ECAL__8b4e1/170922_105053/0000/L1Ntuple_6.root");
+    // Load these files instead when testing
+    // towers.push_back("/eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/treis/l1t-integration-v97p17v2-CMSSW-1000/ZeroBias/crab_l1t-integration-v97p17v2-CMSSW-1000__ZeroBias_Run2017F-v1/180302_133644/0000/L1Ntuple_6.root");
+    towers.push_back("/eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/safarzad/2017/ZeroBias/HighPU/noRECO-l1t-v96p27_v7PUS/ZeroBias8b4e1/crab_noRECO-l1t-v96p27_v7PUS__8b4e1/170915_190938/0000/L1Ntuple_6.root");
+    hcal.push_back("/eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/safarzad/2017/ZeroBias/HighPU/noRECO-l1t-v96p27_HCAL/ZeroBias8b4e1/crab_noRECO-l1t-v96p27_HCAL__8b4e1/170922_121415/0000/L1Ntuple_6.root");
+    ecal.push_back("/eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/safarzad/2017/ZeroBias/HighPU/noRECO-l1t-v96p27_ECAL/ZeroBias8b4e1/crab_noRECO-l1t-v96p27_ECAL__8b4e1/170922_105053/0000/L1Ntuple_6.root");
   }
 
   cout << "Loading up the TChain..." << endl;
@@ -163,7 +164,7 @@ void doMETStudy(){
 
   // Tower hists
   TH1D* hAllTowEt = new TH1D("towerEt", ";Tower E_{T}; # Towers", 40, -0.5, 39.5);
-  TH1D* hAllTowEta = new TH1D("towerEta", "Towers vs iEta;iEta; # Towers", N_IETA_BINS, -40., 40.);
+  TH1D* hAllTowEta = new TH1D("towerEta", "Towers vs iEta;iEta; # Towers / Event", N_IETA_BINS, -40., 40.);
   TH1D* hTowTPETEta = new TH1D("towerTPETEta", "Average tower TP E_{T} vs. iEta; iEta; Average tower TP E_{T}", N_IETA_BINS, -40., 40.);
 
   TH1D* hTowPhiB = new TH1D("towerPhiB", "Towers vs iPhi in Barrel;iPhi; # Towers", N_IPHI_BINS, 0., 72.);
@@ -244,7 +245,7 @@ void doMETStudy(){
   
   for (Long64_t jentry = 0; jentry < nEvents; ++jentry) {
     // initialise some variables
-    int nHCALTPemu(0), nECALTPemu(0), nTowemu(-1);
+    int nHCALTPemu(0), nECALTPemu(0), nTowemu(0); // before was nTowemu(-1)
     double hcalTPEtEm(0), ecalTPEtEm(0), towEtemu(0);
     int hcalTPEtaEm(0), ecalTPEtaEm(0), towEtaemu(0);
     int hcalTPPhiEm(0), ecalTPPhiEm(0), towPhiemu(0);
@@ -280,7 +281,6 @@ void doMETStudy(){
     treeL1ECALemu->GetEntry(jentry);
 
     nTowemu = l1Towemu_->nTower;
-
     nHCALTPemu = l1TPemu_->nHCALTP;
     nECALTPemu = l1TPemu_->nECALTP;
 
@@ -298,8 +298,6 @@ void doMETStudy(){
     // Only loop over events with MET > 100 GeV and set overflow events (MET > 200 GeV) to 200 GeV
     if (l1MetEmu < 99.9) continue;
     if (l1MetEmu > 200.) l1MetEmu = 200.;
-
-    ++nPassing;
 
     // Retrieve MET and ETT for HCAL and ECAL from emulator tree
 
@@ -344,6 +342,7 @@ void doMETStudy(){
  
     for (uint tpIt = 0; tpIt < nHCALTPemu; ++tpIt) {
       hcalTPEtEm = l1TPemu_->hcalTPet[tpIt];
+      // if (hcalTPEtEm < 0.5) continue;
       hcalTPEtaEm = l1TPemu_->hcalTPieta[tpIt];
       hcalTPPhiEm = l1TPemu_->hcalTPiphi[tpIt];
 
@@ -368,12 +367,12 @@ void doMETStudy(){
         hHCALTPETphiHF->Fill(hcalTPPhiEm, hcalTPEtEm);
       }
 
-	    hHCALTPEt->Fill(hcalTPEtEm);
-	    hHCALTPEta->Fill(hcalTPEtaEm);
+      hHCALTPEt->Fill(hcalTPEtEm);
+      hHCALTPEta->Fill(hcalTPEtaEm);
       hHCALTPETEta->Fill(hcalTPEtaEm, hcalTPEtEm);
       hHCALTPPhi->Fill(hcalTPPhiEm);
       hHCALTPETphi->Fill(hcalTPPhiEm, hcalTPEtaEm);
-	    hHCALTPEtaPhi->Fill(hcalTPEtaEm, hcalTPPhiEm);
+      hHCALTPEtaPhi->Fill(hcalTPEtaEm, hcalTPPhiEm);
       // Fill eta-phi histogram with the TP ETs
       hHCALavgTPETEtaPhi->Fill(hcalTPEtaEm, hcalTPPhiEm, hcalTPEtEm);
       if (N_INDIV_EVENTS > nPassing)
@@ -385,6 +384,7 @@ void doMETStudy(){
 
     for (uint tpIt = 0; tpIt < nECALTPemu; ++tpIt){
       ecalTPEtEm = l1TPemu_->ecalTPet[tpIt];
+      // if (ecalTPEtEm < 0.5) continue;
       ecalTPEtaEm = l1TPemu_->ecalTPieta[tpIt];
       ecalTPPhiEm = l1TPemu_->ecalTPiphi[tpIt];
 
@@ -419,6 +419,7 @@ void doMETStudy(){
 
     for(uint towIt = 0; towIt < nTowemu; ++towIt){
       towEtemu  = l1Towemu_->iet[towIt];
+      // if (towEtemu < 0.5) continue;
       towEtaemu = l1Towemu_->ieta[towIt];
       towPhiemu = l1Towemu_->iphi[towIt];
 
@@ -449,6 +450,8 @@ void doMETStudy(){
     hMetPhiEcalHcal->Fill(l1MetPhiECALEmu, l1MetPhiHCALEmu);
     hMetPhiEcalTotal->Fill(l1MetPhiECALEmu, l1MetPhiEmu);
     hMetPhiHcalTotal->Fill(l1MetPhiHCALEmu, l1MetPhiEmu);
+
+    ++nPassing;
 
   }
   
