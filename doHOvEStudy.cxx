@@ -58,16 +58,25 @@ void doHOvEStudy(){
     vector<string> gen;
 
     bool isTest = false;
+    bool isData = true;
 
     // Load files
-    towers.push_back("/home/users/mcitron/triggerStudies/CMSSW_10_3_1/src/L1Ntuple.root");
-    jets.push_back("/home/users/mcitron/triggerStudies/CMSSW_10_3_1/src/L1Ntuple.root");
+    TChain * treeL1Gen;
 
     cout << "Loading up the TChain..." << endl;
     TChain * eventTree = new TChain("l1EventTree/L1EventTree");
     TChain * treeL1Towemu = new TChain("l1CaloTowerEmuTree/L1CaloTowerTree");
     TChain * treeL1emu = new TChain("l1UpgradeEmuTree/L1UpgradeTree");
-    TChain * treeL1Gen = new TChain("l1GeneratorTree/L1GenTree");
+    if (!isData){
+	    towers.push_back("/home/users/mcitron/triggerStudies/CMSSW_10_3_1/src/L1Ntuple.root");
+	    jets.push_back("/home/users/mcitron/triggerStudies/CMSSW_10_3_1/src/L1Ntuple.root");
+	    treeL1Gen = new TChain("l1GeneratorTree/L1GenTree");
+    }
+    else{
+	    towers.push_back("/hadoop/cms/store/user/mcitron/ZeroBias/zbMETa/181212_124635/0000/L1Ntuple_10.root");
+	    jets.push_back("/hadoop/cms/store/user/mcitron/ZeroBias/zbMETa/181212_124635/0000/L1Ntuple_10.root");
+
+    }
 
     int minFiles = std::min( towers.size(), jets.size() );
 
@@ -75,7 +84,9 @@ void doHOvEStudy(){
 	eventTree->Add(towers[i].c_str());
 	treeL1Towemu->Add(towers[i].c_str());
 	treeL1emu->Add(towers[i].c_str());
+	if (!isData){
 	treeL1Gen->Add(towers[i].c_str());
+	}
     }
 
     L1Analysis::L1AnalysisEventDataFormat           *event_ = new L1Analysis::L1AnalysisEventDataFormat();
@@ -87,7 +98,9 @@ void doHOvEStudy(){
     eventTree->SetBranchAddress("Event", &event_);
     treeL1Towemu->SetBranchAddress("L1CaloTower", &l1Towemu_);
     treeL1emu->SetBranchAddress("L1Upgrade", &l1emu_);
+    if (!isData){
     treeL1Gen->SetBranchAddress("Generator", &l1gen_);
+    }
 
     // get number of entries
     Long64_t nentriesTowers;
@@ -111,20 +124,40 @@ void doHOvEStudy(){
     TH1D* hTowTPETphiE = new TH1D("towerTPETPhiE", "Average tower TP E_{T} vs. iPhi in End cap;iPhi; Average tower TP E_{T}", N_IPHI_BINS, 0., 72.);
     // Jet hists
     TH1D * hJetEt = new TH1D("jetET",";ET;",100,0,1000);
-    TH1D * hMaxJetEtDecayInHcal = new TH1D("maxJetEtDecayInHcal",";ET;",100,0,2000);
-    TH1D * hMaxJetSeedEtDecayInHcal = new TH1D("maxJetSeedEtDecayInHcal",";ET;",100,0,1000);
-    TH1D * hMaxJetSeedEmDecayInHcal = new TH1D("maxJetSeedEmDecayInHcal",";ET;",100,0,1000);
-    TH1D * hMaxJetSeedHadDecayInHcal = new TH1D("maxJetSeedHadDecayInHcal",";ET;",100,0,1000);
-    TH1D * hMaxJetSeedHOvEDecayInHcal = new TH1D("maxJetSeedHOvEDecayInHcal",";ET;",110,-11,11);
-    TH1D * hMaxJetSeedHOvE9x9DecayInHcal = new TH1D("maxJetSeedHOvE9x9DecayInHcal",";ET;",110,-11,11);
-    TH1D * hMaxJetSeedHOvE3x3DecayInHcal = new TH1D("maxJetSeedHOvE3x3DecayInHcal",";ET;",110,-11,11);
+    // TH1D * hMaxJetEt = new TH1D("maxJetEt",";ET;",100,0,2000);
+    // TH1D * hMaxJetSeedEt = new TH1D("maxJetSeedEt",";ET;",100,0,1000);
+    // TH1D * hMaxJetSeedEm = new TH1D("maxJetSeedEm",";ET;",100,0,1000);
+    // TH1D * hMaxJetSeedHad = new TH1D("maxJetSeedHad",";ET;",100,0,1000);
 
-    TH1D * hMaxTopTowerEtDecayInHcal = new TH1D("maxTopTowerEtDecayInHcal",";ET;",100,0,1000);
-    TH1D * hMaxTopTowerEmDecayInHcal = new TH1D("maxTopTowerEmDecayInHcal",";ET;",100,0,1000);
-    TH1D * hMaxTopTowerHadDecayInHcal = new TH1D("maxTopTowerHadDecayInHcal",";ET;",100,0,1000);
-    TH1D * hMaxTopTowerHOvEDecayInHcal = new TH1D("maxTopTowerHOvEDecayInHcal",";ET;",110,-11,11);
-    TH1D * hMaxTopTowerHOvE9x9DecayInHcal = new TH1D("maxTopTowerHOvE9x9DecayInHcal",";ET;",110,-11,11);
-    TH1D * hMaxTopTowerHOvE3x3DecayInHcal = new TH1D("maxTopTowerHOvE3x3DecayInHcal",";ET;",110,-11,11);
+    TH1D * hMaxTowerEt = new TH1D("maxTowerEt",";ET;",100,0,1000);
+    TH1D * hMaxTowerEm = new TH1D("maxTowerEm",";ET;",100,0,1000);
+    TH1D * hMaxTowerHad = new TH1D("maxTowerHad",";ET;",100,0,1000);
+
+    std::vector<TString> ratioStrings = {"HOvE","HOvE3","HOvE9","H3OvE3","H9OvE9"};
+    std::map<const TString, TH2D*> maxTower2DHists;
+    // std::map<const TString, TH2D*> maxJet2DHists;
+    std::map<const TString, TH1D*> maxTower1DHists;
+    // std::map<const TString, TH1D*> maxJet1DHists;
+    std::map<const TString, TH1D*> allTower1DHists;
+    std::map<const TString, TH1D*> allJet1DHists;
+    std::map<const TString, double> hOvEThresholds;
+    hOvEThresholds["HOvE5"] = 0.699;
+    hOvEThresholds["HOvE10"] = 1;
+    hOvEThresholds["HOvE20"] = 1.30;
+    hOvEThresholds["HOvE100"] = 2;
+    hOvEThresholds["HOvEInf"] = 4;
+    for (auto ratioIt = ratioStrings.begin(); ratioIt != ratioStrings.end(); ratioIt++){
+	maxTower2DHists["maxTower"+*ratioIt] = new TH2D("maxTower"+*ratioIt,";ET;log(H/E)",100,0,500,110,-11,11);
+	// maxJet2DHists["maxJet"+*ratioIt] = new TH2D("maxJet"+*ratioIt,";ET;log(H/E)",110,-11,11,100,0,500);
+	for (auto hOvEIt = hOvEThresholds.begin(); hOvEIt != hOvEThresholds.end(); hOvEIt++){
+	    allTower1DHists["allTower"+hOvEIt->first+*ratioIt] = new TH1D("allTower"+hOvEIt->first+*ratioIt,";ET;",500,0,500);
+	    allJet1DHists["allJet"+hOvEIt->first+*ratioIt] = new TH1D("allJet"+hOvEIt->first+*ratioIt,";ET;",1000,0,1000);
+	    maxTower1DHists["maxTower"+hOvEIt->first+*ratioIt] = new TH1D("maxTower"+hOvEIt->first+*ratioIt,";ET;",500,0,500);
+	    // maxJet1DHists["maxJet"+hOvEIt->first+*ratioIt] = new TH1D("maxJet"+hOvEIt->first+*ratioIt,";ET;",1000,0,1000);
+	}
+    }
+    std::map<const TString, double> hadVariables;
+    std::map<const TString, double> emVariables;
     // Gen hists 
     TH1D* hPartVr = new TH1D("partVr", ";V_{R};", 100, 0., 1000.);
     TH1D* hPartVz = new TH1D("partVz", ";V_{Z};", 100, 0., 1000.);
@@ -141,12 +174,16 @@ void doHOvEStudy(){
     for (Long64_t jentry = 0; jentry < nEvents; ++jentry) {
 	++nPassing;
 	// initialise some variables
-	int nHCALTPemu(0), nECALTPemu(0), nTowemu(-1), nPart(-1),nJetemu(-1),topTowerIPhi(-1),topTowerIEta(-1);
-	double hcalTPEtEm(0), ecalTPEtEm(0), towEtemu(0), towHademu(0),
-	       towEmemu(0), seedEt(0),seedEm(0),seedHad(0), 
-	       seed3x3Em(0),seed3x3Had(0),seed9x9Em(0),seed9x9Had(0),
-	       topTowerEt(0), topTowerHad(0), topTowerEm(0), topTower3x3Em(0), 
-	       topTower3x3Had(0), topTower9x9Em(0), topTower9x9Had(0);
+	int nHCALTPemu(0), nECALTPemu(0), nTowemu(-1), nPart(-1),nJetemu(-1),maxTowerIPhi(-1),maxTowerIEta(-1);
+	double hcalTPEtEm(0), ecalTPEtEm(0), towEtemu(0), towHademu(0),  towEmemu(0),
+	       maxTowerEt(0), maxTowerHad(0), maxTowerEm(0), maxTower3x3Em(0), 
+	       maxTower3x3Had(0), maxTower9x9Em(0), maxTower9x9Had(0),ratio(0);
+
+	for (auto ratioIt = ratioStrings.begin(); ratioIt != ratioStrings.end(); ratioIt++){
+	    hadVariables[*ratioIt] = 0;
+	    emVariables[*ratioIt] = 0;
+	}
+
 	int hcalTPEtaEm(0), ecalTPEtaEm(0), towEtaemu(0);
 	int hcalTPPhiEm(0), ecalTPPhiEm(0), towPhiemu(0);
 
@@ -179,11 +216,12 @@ void doHOvEStudy(){
 	int event = event_->event;
 
 	treeL1Towemu->GetEntry(jentry);
-	treeL1Gen->GetEntry(jentry);
+	if (!isData){
+	    treeL1Gen->GetEntry(jentry);
+	}
 	treeL1emu->GetEntry(jentry);
 
 	nTowemu = l1Towemu_->nTower;
-	nPart = l1gen_->nPart;
 	nJetemu = l1emu_->nJets;
 	for (uint jetIt = 0; jetIt < nJetemu; ++jetIt){
 	    hJetEt->Fill(l1emu_->jetEt[jetIt]);
@@ -192,19 +230,20 @@ void doHOvEStudy(){
 	    seedTowerIPhi = l1emu_->jetTowerIPhi[0];
 	    seedTowerIEta = l1emu_->jetTowerIEta[0];
 	}
-	bool decayInHCAL = false;
-	for(uint partIt = 0; partIt < nPart; ++partIt){
-	    if (abs(l1gen_->partId[partIt]) == 1000039) {
-		double hcalRadius = TMath::Sqrt(l1gen_->partVx[partIt]*l1gen_->partVx[partIt]+l1gen_->partVy[partIt]*l1gen_->partVy[partIt]);
-		hPartVr->Fill(hcalRadius);
-		hPartVz->Fill(abs(l1gen_->partVz[partIt]));
-		if (hcalRadius > 180 && hcalRadius < 270 && abs(l1gen_->partVz[partIt]) < 390) decayInHCAL = true;
-	    }
-	}
-	if (decayInHCAL){
-	    hMaxJetEtDecayInHcal->Fill(l1emu_->jetEt[0]);
-	}
-
+	bool decayInHCAL = true;
+	// nPart = l1gen_->nPart;
+	// for(uint partIt = 0; partIt < nPart; ++partIt){
+	//     if (abs(l1gen_->partId[partIt]) == 1000039) {
+	// 	double hcalRadius = TMath::Sqrt(l1gen_->partVx[partIt]*l1gen_->partVx[partIt]+l1gen_->partVy[partIt]*l1gen_->partVy[partIt]);
+	// 	hPartVr->Fill(hcalRadius);
+	// 	hPartVz->Fill(abs(l1gen_->partVz[partIt]));
+	// 	if (hcalRadius > 180 && hcalRadius < 270 && abs(l1gen_->partVz[partIt]) < 390) decayInHCAL = true;
+	//     }
+	// }
+	// if (decayInHCAL){
+	//     hMaxJetEt->Fill(l1emu_->jetEt[0]);
+	// }
+	//
 	// Retrieve tower objects from the emulator tree
 	for(uint towIt = 0; towIt < nTowemu; ++towIt){
 	    towEtemu  = l1Towemu_->iet[towIt];
@@ -212,12 +251,12 @@ void doHOvEStudy(){
 	    towEmemu  = l1Towemu_->iem[towIt];
 	    towEtaemu = l1Towemu_->ieta[towIt];
 	    towPhiemu = l1Towemu_->iphi[towIt];
-	    if (towEtemu > topTowerEt){
-		topTowerIPhi = towPhiemu;
-		topTowerIEta = towEtaemu;
-		topTowerEt = towEtemu;
-		topTowerHad = towHademu;
-		topTowerEm = towEmemu;
+	    if (towEtemu > maxTowerEt && abs(towEtaemu) <= 16){
+		maxTowerIPhi = towPhiemu;
+		maxTowerIEta = towEtaemu;
+		maxTowerEt = towEtemu;
+		maxTowerHad = towHademu;
+		maxTowerEm = towEmemu;
 	    }
 	}
 
@@ -237,89 +276,54 @@ void doHOvEStudy(){
 		hTowPhiE->Fill(towPhiemu);
 		hTowTPETphiE->Fill(towPhiemu, towEtemu);
 	    } // Ignoring HF
+	    if (abs(towEtaemu) <= 16){
+		hAllTowEt->Fill(towEtemu);
+		hAllTowEta->Fill(towEtaemu);
+		hTowTPETEta->Fill(towEtaemu, towEtemu);
+		for (int iTopTowerIEta = -4; iTopTowerIEta <= 4; ++iTopTowerIEta){
+		    for (int iTopTowerIPhi = -4; iTopTowerIPhi <= 4; ++iTopTowerIPhi){
+			if (towEtaemu == maxTowerIEta+iTopTowerIEta && towPhiemu == maxTowerIPhi+iTopTowerIPhi){
+			    maxTower9x9Em += towEmemu;
+			    maxTower9x9Had += towHademu;
+			    if (abs(iTopTowerIPhi) <= 1 && abs(iTopTowerIEta) <= 1){
+				maxTower3x3Em += towEmemu;
+				maxTower3x3Had += towHademu;
+			    }
+			}
+		    }
+		}
+	    }
+	}
 
-	    hAllTowEt->Fill(towEtemu);
-	    hAllTowEta->Fill(towEtaemu);
-	    hTowTPETEta->Fill(towEtaemu, towEtemu);
-	    for (int iTopTowerIEta = -4; iTopTowerIEta <= 4; ++iTopTowerIEta){
-		for (int iTopTowerIPhi = -4; iTopTowerIPhi <= 4; ++iTopTowerIPhi){
-		    if (towEtaemu == topTowerIEta+iTopTowerIEta && towPhiemu == topTowerIPhi+iTopTowerIPhi){
-			topTower9x9Em += towEmemu;
-			topTower9x9Had += towHademu;
-			if (abs(iTopTowerIPhi) <= 1 && abs(iTopTowerIEta) <= 1){
-			    topTower3x3Em += towEmemu;
-			    topTower3x3Had += towHademu;
-			}
-		    }
-		}
-	    }
-	    for (int iSeedIEta = -4; iSeedIEta <= 4; ++iSeedIEta){
-		for (int iSeedIPhi = -4; iSeedIPhi <= 4; ++iSeedIPhi){
-		    if (towEtaemu == seedTowerIEta+iSeedIEta && towPhiemu == seedTowerIPhi+iSeedIPhi){
-			seed9x9Had += towHademu;
-			seed9x9Em += towEmemu;
-			if (abs(iSeedIPhi) <= 1 && abs(iSeedIEta) <= 1){
-			    seed3x3Had += towHademu;
-			    seed3x3Em += towEmemu;
-			}
-		    }
-		}
-	    }
-	    if (towEtaemu == seedTowerIEta && towPhiemu == seedTowerIPhi){
-		seedEt = towEtemu;
-		seedHad = towHademu;
-		seedEm = towEmemu;
-	    }
-	}
-	if (decayInHCAL){
-	    hMaxJetSeedEtDecayInHcal->Fill(seedEt);
-	    hMaxJetSeedHadDecayInHcal->Fill(seedHad);
-	    hMaxJetSeedEmDecayInHcal->Fill(seedEm);
-	    if (seedHad > 30){
-		if (seedEm == 0){
-		    hMaxJetSeedHOvEDecayInHcal->Fill(10);
-		}
-		else{
-		    hMaxJetSeedHOvEDecayInHcal->Fill(TMath::Log10(seedHad/seedEm));
-		}
-		if (seed3x3Em == 0){
-		    hMaxJetSeedHOvE3x3DecayInHcal->Fill(10);
-		}
-		else{
-		    hMaxJetSeedHOvE3x3DecayInHcal->Fill(TMath::Log10(seedHad/seed3x3Em));
-		}
-		if (seed9x9Em == 0){
-		    hMaxJetSeedHOvE9x9DecayInHcal->Fill(10);
-		}
-		else{
-		    hMaxJetSeedHOvE9x9DecayInHcal->Fill(TMath::Log10(seedHad/seed9x9Em));
-		}
-	    }
-	    hMaxTopTowerEtDecayInHcal->Fill(topTowerEt);
-	    hMaxTopTowerHadDecayInHcal->Fill(topTowerHad);
-	    hMaxTopTowerEmDecayInHcal->Fill(topTowerEm);
-	    // std::cout << topTowerEm << " "<< topTower3x3Em << " " << topTower9x9Em << std::endl;
-	    if (topTowerHad > 30){
-		if (topTowerEm == 0){
-		    hMaxTopTowerHOvEDecayInHcal->Fill(10);
-		}
-		else{
-		    hMaxTopTowerHOvEDecayInHcal->Fill(TMath::Log10(topTowerHad/topTowerEm));
-		}
-		if (topTower3x3Em == 0){
-		    hMaxTopTowerHOvE3x3DecayInHcal->Fill(10);
-		}
-		else{
-		    hMaxTopTowerHOvE3x3DecayInHcal->Fill(TMath::Log10(topTowerHad/topTower3x3Em));
-		}
-		if (topTower9x9Em == 0){
-		    hMaxTopTowerHOvE9x9DecayInHcal->Fill(10);
-		}
-		else{
-		    hMaxTopTowerHOvE9x9DecayInHcal->Fill(TMath::Log10(topTowerHad/topTower9x9Em));
+	hadVariables["HOvE"] = maxTowerHad;
+	hadVariables["HOvE3"] = maxTowerHad;
+	hadVariables["HOvE9"] = maxTowerHad;
+	hadVariables["H3OvE3"] = maxTower3x3Had;
+	hadVariables["H9OvE9"] = maxTower9x9Had;
+
+	emVariables["HOvE"] = maxTowerEm;
+	emVariables["HOvE3"] = maxTower3x3Em;
+	emVariables["HOvE9"] = maxTower9x9Em;
+	emVariables["H3OvE3"] = maxTower3x3Em;
+	emVariables["H9OvE9"] = maxTower9x9Em;
+
+	hMaxTowerEt->Fill(maxTowerEt);
+	hMaxTowerHad->Fill(maxTowerHad);
+	hMaxTowerEm->Fill(maxTowerEm);
+
+	for (auto ratioIt = ratioStrings.begin(); ratioIt != ratioStrings.end(); ratioIt++){
+	    if (emVariables[*ratioIt] == 0) ratio = 10.1;
+	    else if (hadVariables[*ratioIt] > 0) ratio = TMath::Log10(hadVariables[*ratioIt]/emVariables[*ratioIt]);
+	    // std::cout << std::endl;
+	    // std::cout << hadVariables[*ratioIt] << " "<< ratio << std::endl;
+	    maxTower2DHists["maxTower"+*ratioIt]->Fill(hadVariables[*ratioIt],ratio);
+	    for (auto hOvEIt = hOvEThresholds.begin(); hOvEIt != hOvEThresholds.end(); hOvEIt++){
+		if (ratio >= hOvEIt->second){
+		    maxTower1DHists["maxTower"+hOvEIt->first+*ratioIt]->Fill(hadVariables[*ratioIt]);
 		}
 	    }
 	}
+
     }
 
     // End event loop, now plot histos
@@ -347,6 +351,8 @@ void doHOvEStudy(){
 
     hTowTPETphiE->Divide(hTowPhiE);
     hTowTPETphiE->Scale(nPassing);
+    canvas->SetLogy();
+    canvas->SetLogz();
     formatPlot1D(hTowTPETphiE, towerColour);
     canvas->SaveAs("./Plots/Towers/TowTPETphiE.pdf");
 
@@ -362,42 +368,23 @@ void doHOvEStudy(){
     formatPlot1D(hPartVz, towerColour);
     canvas->SaveAs("./Plots/Gen/PartVz.pdf");
 
-    formatPlot1D(hMaxJetEtDecayInHcal, jetColour);
-    canvas->SaveAs("./Plots/Jets/maxJetEtDecayInHcal.pdf");
+    formatPlot1D(hMaxTowerEt, jetColour);
+    canvas->SaveAs("./Plots/Jets/maxTowerEt.pdf");
 
-    formatPlot1D(hMaxJetSeedEtDecayInHcal, jetColour);
-    canvas->SaveAs("./Plots/Jets/maxJetSeedEtDecayInHcal.pdf");
+    formatPlot1D(hMaxTowerHad, jetColour);
+    canvas->SaveAs("./Plots/Jets/maxTowerHad.pdf");
 
-    formatPlot1D(hMaxJetSeedHadDecayInHcal, jetColour);
-    canvas->SaveAs("./Plots/Jets/maxJetSeedHadDecayInHcal.pdf");
+    formatPlot1D(hMaxTowerEm, jetColour);
+    canvas->SaveAs("./Plots/Jets/maxTowerEm.pdf");
 
-    formatPlot1D(hMaxJetSeedEmDecayInHcal, jetColour);
-    canvas->SaveAs("./Plots/Jets/maxJetSeedEmDecayInHcal.pdf");
-
-    formatPlot1D(hMaxJetSeedHOvEDecayInHcal, jetColour);
-    canvas->SaveAs("./Plots/Jets/maxJetSeedHOvEDecayInHcal.pdf");
-
-    formatPlot1D(hMaxJetSeedHOvE3x3DecayInHcal, jetColour);
-    canvas->SaveAs("./Plots/Jets/maxJetSeedHOvE3x3DecayInHcal.pdf");
-
-    formatPlot1D(hMaxJetSeedHOvE9x9DecayInHcal, jetColour);
-    canvas->SaveAs("./Plots/Jets/maxJetSeedHOvE9x9DecayInHcal.pdf");
-
-    formatPlot1D(hMaxTopTowerEtDecayInHcal, jetColour);
-    canvas->SaveAs("./Plots/Jets/maxTopTowerEtDecayInHcal.pdf");
-
-    formatPlot1D(hMaxTopTowerHadDecayInHcal, jetColour);
-    canvas->SaveAs("./Plots/Jets/maxTopTowerHadDecayInHcal.pdf");
-
-    formatPlot1D(hMaxTopTowerEmDecayInHcal, jetColour);
-    canvas->SaveAs("./Plots/Jets/maxTopTowerEmDecayInHcal.pdf");
-
-    formatPlot1D(hMaxTopTowerHOvEDecayInHcal, jetColour);
-    canvas->SaveAs("./Plots/Jets/maxTopTowerHOvEDecayInHcal.pdf");
-
-    formatPlot1D(hMaxTopTowerHOvE3x3DecayInHcal, jetColour);
-    canvas->SaveAs("./Plots/Jets/maxTopTowerHOvE3x3DecayInHcal.pdf");
-
-    formatPlot1D(hMaxTopTowerHOvE9x9DecayInHcal, jetColour);
-    canvas->SaveAs("./Plots/Jets/maxTopTowerHOvE9x9DecayInHcal.pdf");
+    for (auto ratioIt = ratioStrings.begin(); ratioIt != ratioStrings.end(); ratioIt++){
+	canvas->SetLogy(0);
+	formatPlot2D(maxTower2DHists["maxTower"+*ratioIt]);
+	canvas->SaveAs("./Plots/Towers/maxTower"+*ratioIt+".pdf");
+	canvas->SetLogy();
+	for (auto hOvEIt = hOvEThresholds.begin(); hOvEIt != hOvEThresholds.end(); hOvEIt++){
+	    formatPlot1D(maxTower1DHists["maxTower"+hOvEIt->first+*ratioIt],towerColour);
+	    canvas->SaveAs("./Plots/Towers/maxTower"+hOvEIt->first+*ratioIt+".pdf");
+	}
+    }
 }
