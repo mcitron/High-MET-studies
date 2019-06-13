@@ -2,22 +2,23 @@
 #include "TFile.h"
 #include "TTree.h"
 #include "TH1F.h"
+#include "TH2D.h"
 #include "TChain.h"
 #include "TAttMarker.h"
 #include <TCanvas.h>
 #include <iostream>
 #include <fstream>
 #include <sstream>
-#include <string>
 
 // Following headers help decode L1T ntuples
-#include "L1Trigger/L1TNtuples/interface/L1AnalysisEventDataFormat.h"
-#include "L1Trigger/L1TNtuples/interface/L1AnalysisL1UpgradeDataFormat.h"
-#include "L1Trigger/L1TNtuples/interface/L1AnalysisRecoVertexDataFormat.h"
-#include "L1Trigger/L1TNtuples/interface/L1AnalysisCaloTPDataFormat.h"
-#include "L1Trigger/L1TNtuples/interface/L1AnalysisL1CaloTowerDataFormat.h"
-#include "L1Trigger/L1TNtuples/interface/L1AnalysisRecoJetDataFormat.h"
-#include "L1Trigger/L1TNtuples/interface/L1AnalysisGeneratorDataFormat.h"
+#include "../L1Trigger/L1TNtuples/interface/L1AnalysisEventDataFormat.h"
+#include "../L1Trigger/L1TNtuples/interface/L1AnalysisL1UpgradeDataFormat.h"
+#include "../L1Trigger/L1TNtuples/interface/L1AnalysisRecoVertexDataFormat.h"
+#include "../L1Trigger/L1TNtuples/interface/L1AnalysisCaloTPDataFormat.h"
+#include "../L1Trigger/L1TNtuples/interface/L1AnalysisL1CaloTowerDataFormat.h"
+#include "../L1Trigger/L1TNtuples/interface/L1AnalysisRecoJetDataFormat.h"
+#include "../L1Trigger/L1TNtuples/interface/L1AnalysisGeneratorDataFormat.h"
+#include "../L1Trigger/L1TNtuples/interface/L1AnalysisRecoVertexDataFormat.h"
 
 #define N_IETA_BINS 80
 #define N_IPHI_BINS 72
@@ -35,7 +36,7 @@ void formatPlot1D(TH1D* plot1d, int colour){
     plot1d->SetMinimum(0.);
     plot1d->SetLineColor(colour);
     plot1d->SetLineWidth(2);
-    plot1d->Scale(1. / (double) nPassing);
+    // plot1d->Scale(1. / (double) nPassing);
     plot1d->Draw("HIST");
     plot1d->SetStats(false);
 }
@@ -48,44 +49,50 @@ void formatPlot2D(TH2D* plot2d){
     plot2d->SetStats(false);
 }
 
-//main plotting function
-void doHOvEStudy(){
+int doHOvEStudy(TString inFileName,TString outFileName, TString puSelStr, TString singleJetStr){
 
     std::cout << "Running doHOvEStudy.cxx..." << std::endl;
-
-    vector<string> towers;
-    vector<string> jets;
-    vector<string> gen;
+    uint puSel = puSelStr.Atoi();
+    bool rateAboveSingleJet = (singleJetStr.Atoi() > 0);
+    std::vector<TString> towers;
+    // std::vector<TString> jets;
+    // std::vector<TString> gen;
 
     bool isTest = false;
     bool isData = true;
+    int maxTowerBarrel = 16;
+    int maxTowerEndcap = 28;
 
     // Load files
     TChain * treeL1Gen;
 
-    cout << "Loading up the TChain..." << endl;
+    std::cout << "Loading up the TChain..." << std::endl;
     TChain * eventTree = new TChain("l1EventTree/L1EventTree");
     TChain * treeL1Towemu = new TChain("l1CaloTowerEmuTree/L1CaloTowerTree");
     TChain * treeL1emu = new TChain("l1UpgradeEmuTree/L1UpgradeTree");
-    if (!isData){
-	    towers.push_back("/home/users/mcitron/triggerStudies/CMSSW_10_3_1/src/L1Ntuple.root");
-	    jets.push_back("/home/users/mcitron/triggerStudies/CMSSW_10_3_1/src/L1Ntuple.root");
-	    treeL1Gen = new TChain("l1GeneratorTree/L1GenTree");
-    }
-    else{
-	    towers.push_back("/hadoop/cms/store/user/mcitron/ZeroBias/zbMETa/181212_124635/0000/L1Ntuple_10.root");
-	    jets.push_back("/hadoop/cms/store/user/mcitron/ZeroBias/zbMETa/181212_124635/0000/L1Ntuple_10.root");
+    TChain * treeL1reco = new TChain("l1RecoTree/RecoTree");
 
-    }
+    towers.push_back(inFileName);
+    // if (!isData){
+	//     towers.push_back("/home/users/mcitron/triggerStudies/CMSSW_10_3_1/src/L1Ntuple.root");
+	//     jets.push_back("/home/users/mcitron/triggerStudies/CMSSW_10_3_1/src/L1Ntuple.root");
+	//     treeL1Gen = new TChain("l1GeneratorTree/L1GenTree");
+    // }
+    // else{
+	//     towers.push_back("/hadoop/cms/store/user/mcitron/ZeroBias/zbMETa/181212_124635/0000/L1Ntuple_10.root");
+	//     jets.push_back("/hadoop/cms/store/user/mcitron/ZeroBias/zbMETa/181212_124635/0000/L1Ntuple_10.root");
+    //
+    // }
 
-    int minFiles = std::min( towers.size(), jets.size() );
+    uint minFiles = towers.size();
 
     for(uint i = 0; i < minFiles; ++i) {
-	eventTree->Add(towers[i].c_str());
-	treeL1Towemu->Add(towers[i].c_str());
-	treeL1emu->Add(towers[i].c_str());
+	eventTree->Add(towers[i]);
+	treeL1Towemu->Add(towers[i]);
+	treeL1emu->Add(towers[i]);
+	treeL1reco->Add(towers[i]);
 	if (!isData){
-	treeL1Gen->Add(towers[i].c_str());
+	treeL1Gen->Add(towers[i]);
 	}
     }
 
@@ -93,11 +100,13 @@ void doHOvEStudy(){
     L1Analysis::L1AnalysisL1CaloTowerDataFormat     *l1Towemu_ = new L1Analysis::L1AnalysisL1CaloTowerDataFormat();
     L1Analysis::L1AnalysisL1UpgradeDataFormat       *l1emu_ = new L1Analysis::L1AnalysisL1UpgradeDataFormat();
     L1Analysis::L1AnalysisGeneratorDataFormat       *l1gen_ = new L1Analysis::L1AnalysisGeneratorDataFormat();
+    L1Analysis::L1AnalysisRecoVertexDataFormat       *l1reco_ = new L1Analysis::L1AnalysisRecoVertexDataFormat();
     // L1Analysis::L1AnalysisL1UpgradeDataFormat       *l1emu_ = new L1Analysis::L1AnalysisL1UpgradeDataFormat();
 
     eventTree->SetBranchAddress("Event", &event_);
     treeL1Towemu->SetBranchAddress("L1CaloTower", &l1Towemu_);
     treeL1emu->SetBranchAddress("L1Upgrade", &l1emu_);
+    treeL1reco->SetBranchAddress("Vertex", &l1reco_);
     if (!isData){
     treeL1Gen->SetBranchAddress("Generator", &l1gen_);
     }
@@ -111,6 +120,7 @@ void doHOvEStudy(){
     //
 
     // Initialise histograms
+    TH1D* nTotHist = new TH1D("nTot",";;nPass",2,0,2);
 
     // Tower hists
     TH1D* hAllTowEt = new TH1D("towerEt", ";Tower E_{T}; # Towers", 40, -0.5, 39.5);
@@ -139,26 +149,35 @@ void doHOvEStudy(){
     std::map<const TString, TH1D*> maxTower1DHists;
     // std::map<const TString, TH1D*> maxJet1DHists;
     std::map<const TString, TH1D*> allTower1DHists;
-    std::map<const TString, TH1D*> allJet1DHists;
+    std::map<const TString, TH1D*> maxJet1DHists;
+
     std::map<const TString, double> hOvEThresholds;
-    hOvEThresholds["HOvE5"] = 0.699;
-    hOvEThresholds["HOvE10"] = 1;
-    hOvEThresholds["HOvE20"] = 1.30;
-    hOvEThresholds["HOvE100"] = 2;
-    hOvEThresholds["HOvEInf"] = 4;
+    hOvEThresholds["None"] = -100;
+    hOvEThresholds["5"] = 0.699;
+    hOvEThresholds["10"] = 1;
+    hOvEThresholds["20"] = 1.30;
+    hOvEThresholds["100"] = 2;
+    hOvEThresholds["Inf"] = 4;
+    std::map<const TString, double> hadThresholds;
+    hadThresholds["None"] = -100;
+    hadThresholds["10"] = 10;
+    hadThresholds["20"] = 20;
+    hadThresholds["30"] = 30;
+    hadThresholds["50"] = 50;
+
     for (auto ratioIt = ratioStrings.begin(); ratioIt != ratioStrings.end(); ratioIt++){
 	maxTower2DHists["maxTower"+*ratioIt] = new TH2D("maxTower"+*ratioIt,";ET;log(H/E)",100,0,500,110,-11,11);
-	// maxJet2DHists["maxJet"+*ratioIt] = new TH2D("maxJet"+*ratioIt,";ET;log(H/E)",110,-11,11,100,0,500);
 	for (auto hOvEIt = hOvEThresholds.begin(); hOvEIt != hOvEThresholds.end(); hOvEIt++){
-	    allTower1DHists["allTower"+hOvEIt->first+*ratioIt] = new TH1D("allTower"+hOvEIt->first+*ratioIt,";ET;",500,0,500);
-	    allJet1DHists["allJet"+hOvEIt->first+*ratioIt] = new TH1D("allJet"+hOvEIt->first+*ratioIt,";ET;",1000,0,1000);
-	    maxTower1DHists["maxTower"+hOvEIt->first+*ratioIt] = new TH1D("maxTower"+hOvEIt->first+*ratioIt,";ET;",500,0,500);
-	    // maxJet1DHists["maxJet"+hOvEIt->first+*ratioIt] = new TH1D("maxJet"+hOvEIt->first+*ratioIt,";ET;",1000,0,1000);
+	    for (auto hadIt = hadThresholds.begin(); hadIt != hadThresholds.end(); hadIt++){
+		maxJet1DHists["maxJetHOvE"+hOvEIt->first+"Had"+hadIt->first+*ratioIt] = new TH1D("maxJetHOvE"+hOvEIt->first+"Had"+hadIt->first+*ratioIt,";ET;",1000,0,1000);
+		maxTower1DHists["maxTowerHOvE"+hOvEIt->first+"Had"+hadIt->first+*ratioIt] = new TH1D("maxTowerHOvE"+hOvEIt->first+"Had"+hadIt->first+*ratioIt,";ET;",500,0,500);
+	    }
 	}
     }
-    std::map<const TString, double> hadVariables;
-    std::map<const TString, double> emVariables;
-    // Gen hists 
+    std::map<const TString, double> hadVariablesMaxTower;
+    std::map<const TString, double> emVariablesMaxTower;
+
+
     TH1D* hPartVr = new TH1D("partVr", ";V_{R};", 100, 0., 1000.);
     TH1D* hPartVz = new TH1D("partVz", ";V_{Z};", 100, 0., 1000.);
     // Histogram arrays for storing individual event information
@@ -172,16 +191,21 @@ void doHOvEStudy(){
 
     nEvents = std::min(nentriesTowers,nEvents);//std::min(std::min(nentriesTowers,nentriesHCAL),nentriesECAL);
     for (Long64_t jentry = 0; jentry < nEvents; ++jentry) {
-	++nPassing;
+	nTotHist->Fill(0.5);
+	std::map<const TString, std::vector<double> > hadVariablesAllJets;
+	std::map<const TString, std::vector<double> > emVariablesAllJets;
 	// initialise some variables
-	int nHCALTPemu(0), nECALTPemu(0), nTowemu(-1), nPart(-1),nJetemu(-1),maxTowerIPhi(-1),maxTowerIEta(-1);
+	uint nHCALTPemu(0), nECALTPemu(0), nTowemu(0), nPart(0),nJetemu(0);
+	int maxTowerIPhi(-1),maxTowerIEta(-1);
 	double hcalTPEtEm(0), ecalTPEtEm(0), towEtemu(0), towHademu(0),  towEmemu(0),
 	       maxTowerEt(0), maxTowerHad(0), maxTowerEm(0), maxTower3x3Em(0), 
-	       maxTower3x3Had(0), maxTower9x9Em(0), maxTower9x9Had(0),ratio(0);
+	       maxTower3x3Had(0), maxTower9x9Em(0), maxTower9x9Had(0),ratioTower(0),ratioJet(0);
 
 	for (auto ratioIt = ratioStrings.begin(); ratioIt != ratioStrings.end(); ratioIt++){
-	    hadVariables[*ratioIt] = 0;
-	    emVariables[*ratioIt] = 0;
+	    hadVariablesMaxTower[*ratioIt] = 0;
+	    emVariablesMaxTower[*ratioIt] = 0;
+	    // hadVariablesAllJets[*ratioIt] = std::vector<double>;
+	    // emVariablesMaxTower[*ratioIt] = std::vector<double>;
 	}
 
 	int hcalTPEtaEm(0), ecalTPEtaEm(0), towEtaemu(0);
@@ -206,8 +230,8 @@ void doHOvEStudy(){
 	int run(306042);
 
 	//counter
-	if( (jentry % 10000) == 0 ) cout << "Done " << jentry << " events of " << nEvents << endl;
-	if( (jentry % 1000) == 0 ) cout << "." << flush;
+	if( (jentry % 1000) == 0 ) std::cout << "Done " << jentry << " events of " << nEvents << std::endl;
+	if( (jentry % 100) == 0 ) std::cout << "." << std::flush;
 
 	eventTree->GetEntry(jentry);
 
@@ -216,21 +240,74 @@ void doHOvEStudy(){
 	int event = event_->event;
 
 	treeL1Towemu->GetEntry(jentry);
+	treeL1reco->GetEntry(jentry);
 	if (!isData){
 	    treeL1Gen->GetEntry(jentry);
 	}
 	treeL1emu->GetEntry(jentry);
-
+	uint nVtxReco = l1reco_->nVtx;
+	if (nVtxReco < puSel) continue;
 	nTowemu = l1Towemu_->nTower;
 	nJetemu = l1emu_->nJets;
+	nTotHist->Fill(1.5);
+	if (rateAboveSingleJet){
+	    double maxPt = -1;
+	    for (uint jetIt = 0; jetIt < nJetemu; ++jetIt){
+		seedTowerIPhi = l1emu_->jetTowerIPhi[jetIt];
+		seedTowerIEta = l1emu_->jetTowerIEta[jetIt];
+		if (abs(seedTowerIEta) <= maxTowerEndcap){
+		    if (maxPt < l1emu_->jetEt[jetIt]) maxPt = l1emu_->jetEt[jetIt];
+		}
+	    }
+	    if (maxPt > 170){
+		continue;
+	    }
+	}
 	for (uint jetIt = 0; jetIt < nJetemu; ++jetIt){
 	    hJetEt->Fill(l1emu_->jetEt[jetIt]);
+	    seedTowerIPhi = l1emu_->jetTowerIPhi[jetIt];
+	    seedTowerIEta = l1emu_->jetTowerIEta[jetIt];
+	    double seedTowerHad(0), seedTowerEm(0), seedTower3x3Em(0), 
+		   seedTower3x3Had(0), seedTower9x9Em(0), seedTower9x9Had(0);
+	    for(uint towIt = 0; towIt < nTowemu; ++towIt){
+		towEtemu  = l1Towemu_->iet[towIt];
+		towHademu  = l1Towemu_->ihad[towIt];
+		towEmemu  = l1Towemu_->iem[towIt];
+		towEtaemu = l1Towemu_->ieta[towIt];
+		towPhiemu = l1Towemu_->iphi[towIt];
+		if (towEtaemu == seedTowerIEta && towPhiemu == seedTowerIPhi){
+		   seedTowerHad = towHademu;
+		   seedTowerEm = towEmemu;
+		}
+		for (int iSeedTowerIEta = -4; iSeedTowerIEta <= 4; ++iSeedTowerIEta){
+		    for (int iSeedTowerIPhi = -4; iSeedTowerIPhi <= 4; ++iSeedTowerIPhi){
+			if (towEtaemu == seedTowerIEta+iSeedTowerIEta && towPhiemu == seedTowerIPhi+iSeedTowerIPhi){
+			    seedTower9x9Em += towEmemu;
+			    seedTower9x9Had += towHademu;
+			    if (abs(iSeedTowerIPhi) <= 1 && abs(iSeedTowerIEta) <= 1){
+				seedTower3x3Em += towEmemu;
+				seedTower3x3Had += towHademu;
+			    }
+			}
+		    }
+		}
+	    }
+	    
+	    hadVariablesAllJets["HOvE"].push_back(seedTowerHad);
+	    hadVariablesAllJets["HOvE3"].push_back(seedTowerHad);
+	    hadVariablesAllJets["HOvE9"].push_back(seedTowerHad);
+	    hadVariablesAllJets["H3OvE3"].push_back(seedTower3x3Had);
+	    hadVariablesAllJets["H9OvE9"].push_back(seedTower9x9Had);
+
+	    emVariablesAllJets["HOvE"].push_back(seedTowerEm);
+	    emVariablesAllJets["HOvE3"].push_back(seedTower3x3Em);
+	    emVariablesAllJets["HOvE9"].push_back(seedTower9x9Em);
+	    emVariablesAllJets["H3OvE3"].push_back(seedTower3x3Em);
+	    emVariablesAllJets["H9OvE9"].push_back(seedTower9x9Em);
 	}
-	if (nJetemu){
-	    seedTowerIPhi = l1emu_->jetTowerIPhi[0];
-	    seedTowerIEta = l1emu_->jetTowerIEta[0];
-	}
-	bool decayInHCAL = true;
+
+	// gen stuff
+	// bool decayInHCAL = true;
 	// nPart = l1gen_->nPart;
 	// for(uint partIt = 0; partIt < nPart; ++partIt){
 	//     if (abs(l1gen_->partId[partIt]) == 1000039) {
@@ -245,13 +322,15 @@ void doHOvEStudy(){
 	// }
 	//
 	// Retrieve tower objects from the emulator tree
+
+	// Max tower stuff
 	for(uint towIt = 0; towIt < nTowemu; ++towIt){
 	    towEtemu  = l1Towemu_->iet[towIt];
 	    towHademu  = l1Towemu_->ihad[towIt];
 	    towEmemu  = l1Towemu_->iem[towIt];
 	    towEtaemu = l1Towemu_->ieta[towIt];
 	    towPhiemu = l1Towemu_->iphi[towIt];
-	    if (towEtemu > maxTowerEt && abs(towEtaemu) <= 16){
+	    if (towEtemu > maxTowerEt && abs(towEtaemu) <= maxTowerEndcap){
 		maxTowerIPhi = towPhiemu;
 		maxTowerIEta = towEtaemu;
 		maxTowerEt = towEtemu;
@@ -267,16 +346,16 @@ void doHOvEStudy(){
 	    towEtaemu = l1Towemu_->ieta[towIt];
 	    towPhiemu = l1Towemu_->iphi[towIt];
 
-	    if (abs(towEtaemu) <= 16) {
+	    if (abs(towEtaemu) <= maxTowerBarrel) {
 		hTowPhiB->Fill(towPhiemu);
 		hTowTPETphiB->Fill(towPhiemu, towEtemu);
 	    }
 
-	    else if (abs(towEtaemu) > 16 && abs(towEtaemu) <= 28) {
+	    else if (abs(towEtaemu) > maxTowerBarrel && abs(towEtaemu) <= maxTowerEndcap) {
 		hTowPhiE->Fill(towPhiemu);
 		hTowTPETphiE->Fill(towPhiemu, towEtemu);
 	    } // Ignoring HF
-	    if (abs(towEtaemu) <= 16){
+	    if (abs(towEtaemu) <= maxTowerEndcap){
 		hAllTowEt->Fill(towEtemu);
 		hAllTowEta->Fill(towEtaemu);
 		hTowTPETEta->Fill(towEtaemu, towEtemu);
@@ -295,96 +374,138 @@ void doHOvEStudy(){
 	    }
 	}
 
-	hadVariables["HOvE"] = maxTowerHad;
-	hadVariables["HOvE3"] = maxTowerHad;
-	hadVariables["HOvE9"] = maxTowerHad;
-	hadVariables["H3OvE3"] = maxTower3x3Had;
-	hadVariables["H9OvE9"] = maxTower9x9Had;
+	hadVariablesMaxTower["HOvE"] = maxTowerHad;
+	hadVariablesMaxTower["HOvE3"] = maxTowerHad;
+	hadVariablesMaxTower["HOvE9"] = maxTowerHad;
+	hadVariablesMaxTower["H3OvE3"] = maxTower3x3Had;
+	hadVariablesMaxTower["H9OvE9"] = maxTower9x9Had;
 
-	emVariables["HOvE"] = maxTowerEm;
-	emVariables["HOvE3"] = maxTower3x3Em;
-	emVariables["HOvE9"] = maxTower9x9Em;
-	emVariables["H3OvE3"] = maxTower3x3Em;
-	emVariables["H9OvE9"] = maxTower9x9Em;
+	emVariablesMaxTower["HOvE"] = maxTowerEm;
+	emVariablesMaxTower["HOvE3"] = maxTower3x3Em;
+	emVariablesMaxTower["HOvE9"] = maxTower9x9Em;
+	emVariablesMaxTower["H3OvE3"] = maxTower3x3Em;
+	emVariablesMaxTower["H9OvE9"] = maxTower9x9Em;
 
 	hMaxTowerEt->Fill(maxTowerEt);
 	hMaxTowerHad->Fill(maxTowerHad);
 	hMaxTowerEm->Fill(maxTowerEm);
 
 	for (auto ratioIt = ratioStrings.begin(); ratioIt != ratioStrings.end(); ratioIt++){
-	    if (emVariables[*ratioIt] == 0) ratio = 10.1;
-	    else if (hadVariables[*ratioIt] > 0) ratio = TMath::Log10(hadVariables[*ratioIt]/emVariables[*ratioIt]);
-	    // std::cout << std::endl;
-	    // std::cout << hadVariables[*ratioIt] << " "<< ratio << std::endl;
-	    maxTower2DHists["maxTower"+*ratioIt]->Fill(hadVariables[*ratioIt],ratio);
+	    if (emVariablesMaxTower[*ratioIt] == 0) ratioTower = 10.1;
+	    else if (hadVariablesMaxTower[*ratioIt] > 0) ratioTower = TMath::Log10(hadVariablesMaxTower[*ratioIt]/emVariablesMaxTower[*ratioIt]);
+	    else ratioTower = -10.1;
+
+	    maxTower2DHists["maxTower"+*ratioIt]->Fill(hadVariablesMaxTower[*ratioIt],ratioTower);
 	    for (auto hOvEIt = hOvEThresholds.begin(); hOvEIt != hOvEThresholds.end(); hOvEIt++){
-		if (ratio >= hOvEIt->second){
-		    maxTower1DHists["maxTower"+hOvEIt->first+*ratioIt]->Fill(hadVariables[*ratioIt]);
+		for (auto hadIt = hadThresholds.begin(); hadIt != hadThresholds.end(); hadIt++){
+		    if (ratioTower >= hOvEIt->second && hadVariablesMaxTower[*ratioIt] >= hadIt->second){
+			maxTower1DHists["maxTowerHOvE"+hOvEIt->first+"Had"+hadIt->first+*ratioIt]->Fill(hadVariablesMaxTower[*ratioIt]);
+		    }
+		    double maxPt = -1;
+		    for (uint jetIt = 0; jetIt < nJetemu; ++jetIt){
+			seedTowerIPhi = l1emu_->jetTowerIPhi[jetIt];
+			seedTowerIEta = l1emu_->jetTowerIEta[jetIt];
+			if (emVariablesAllJets[*ratioIt][jetIt] == 0) ratioJet = 10.1;
+			else if (hadVariablesAllJets[*ratioIt][jetIt]> 0) ratioJet = TMath::Log10(hadVariablesAllJets[*ratioIt][jetIt]/emVariablesAllJets[*ratioIt][jetIt]);
+			else ratioJet = -10.1;
+			if (abs(seedTowerIEta) <= maxTowerEndcap && ratioJet >= hOvEIt->second && hadVariablesAllJets[*ratioIt][jetIt] >= hadIt->second){
+			    if (maxPt < l1emu_->jetEt[jetIt]) maxPt = l1emu_->jetEt[jetIt];
+			}
+		    }
+		    if (maxPt > 0) maxJet1DHists["maxJetHOvE"+hOvEIt->first+"Had"+hadIt->first+*ratioIt]->Fill(maxPt);
 		}
 	    }
 	}
-
     }
 
     // End event loop, now plot histos
-    TCanvas* canvas = new TCanvas("canvas","",750,700);
-
+    // TCanvas* canvas = new TCanvas("canvas","",750,700);
+    //
     int ecalColour = 2;
     int hcalColour = 4;
     int towerColour = 3;
     int jetColour = 3;
 
-    // Plot TP ET vs iEta for ECAL, HCAL and towers
-    // Need to do divide before plotting occupancy otherwise normalisation is wrong
-    hTowTPETEta->Divide(hAllTowEta);
-    hTowTPETEta->Scale(nPassing);
-    formatPlot1D(hTowTPETEta, towerColour);
-    canvas->SaveAs("./Plots/Towers/TowTPETEta.pdf");
-
-    formatPlot1D(hAllTowEta, towerColour);
-    canvas->SaveAs("./Plots/Towers/TowEta.pdf");
-
-    hTowTPETphiB->Divide(hTowPhiB);
-    hTowTPETphiB->Scale(nPassing);
-    formatPlot1D(hTowTPETphiB, towerColour);
-    canvas->SaveAs("./Plots/Towers/TowTPETphiB.pdf");
-
-    hTowTPETphiE->Divide(hTowPhiE);
-    hTowTPETphiE->Scale(nPassing);
-    canvas->SetLogy();
-    canvas->SetLogz();
-    formatPlot1D(hTowTPETphiE, towerColour);
-    canvas->SaveAs("./Plots/Towers/TowTPETphiE.pdf");
-
-    formatPlot1D(hTowPhiB, towerColour);
-    canvas->SaveAs("./Plots/Towers/TowPhiBarrel.pdf");
-
-    formatPlot1D(hTowPhiE, towerColour);
-    canvas->SaveAs("./Plots/Towers/TowPhiEndcap.pdf");
-
-    formatPlot1D(hPartVr, towerColour);
-    canvas->SaveAs("./Plots/Gen/PartVr.pdf");
-
-    formatPlot1D(hPartVz, towerColour);
-    canvas->SaveAs("./Plots/Gen/PartVz.pdf");
-
-    formatPlot1D(hMaxTowerEt, jetColour);
-    canvas->SaveAs("./Plots/Jets/maxTowerEt.pdf");
-
-    formatPlot1D(hMaxTowerHad, jetColour);
-    canvas->SaveAs("./Plots/Jets/maxTowerHad.pdf");
-
-    formatPlot1D(hMaxTowerEm, jetColour);
-    canvas->SaveAs("./Plots/Jets/maxTowerEm.pdf");
-
+    TFile outputFile = TFile(outFileName,"RECREATE");
+    outputFile.cd();
+    nTotHist->Write();
+    TDirectory * maxTower2DDir = outputFile.mkdir("maxTower2DHists");
+    maxTower2DDir->cd();
     for (auto ratioIt = ratioStrings.begin(); ratioIt != ratioStrings.end(); ratioIt++){
-	canvas->SetLogy(0);
 	formatPlot2D(maxTower2DHists["maxTower"+*ratioIt]);
-	canvas->SaveAs("./Plots/Towers/maxTower"+*ratioIt+".pdf");
-	canvas->SetLogy();
-	for (auto hOvEIt = hOvEThresholds.begin(); hOvEIt != hOvEThresholds.end(); hOvEIt++){
-	    formatPlot1D(maxTower1DHists["maxTower"+hOvEIt->first+*ratioIt],towerColour);
-	    canvas->SaveAs("./Plots/Towers/maxTower"+hOvEIt->first+*ratioIt+".pdf");
+	maxTower2DHists["maxTower"+*ratioIt]->Write();
+    }
+    outputFile.cd();
+    TDirectory * ptDirJet = outputFile.mkdir("ptHistsJet");
+    for (auto hOvEIt = hOvEThresholds.begin(); hOvEIt != hOvEThresholds.end(); hOvEIt++){
+	TDirectory * hOvEDir = ptDirJet->mkdir("hOvE"+hOvEIt->first);
+	hOvEDir->cd();
+	for (auto hadIt = hadThresholds.begin(); hadIt != hadThresholds.end(); hadIt++){
+	    TDirectory * hadDir = hOvEDir->mkdir("had"+hadIt->first);
+	    hadDir->cd();
+	    for (auto ratioIt = ratioStrings.begin(); ratioIt != ratioStrings.end(); ratioIt++){
+		formatPlot1D(maxJet1DHists["maxJetHOvE"+hOvEIt->first+"Had"+hadIt->first+*ratioIt],jetColour);
+		maxJet1DHists["maxJetHOvE"+hOvEIt->first+"Had"+hadIt->first+*ratioIt]->Write();
+	    }
 	}
     }
+    TDirectory * ptDirTower = outputFile.mkdir("ptHistsTower");
+    for (auto hOvEIt = hOvEThresholds.begin(); hOvEIt != hOvEThresholds.end(); hOvEIt++){
+	TDirectory * hOvEDir = ptDirTower->mkdir("hOvE"+hOvEIt->first);
+	hOvEDir->cd();
+	for (auto hadIt = hadThresholds.begin(); hadIt != hadThresholds.end(); hadIt++){
+	    TDirectory * hadDir = hOvEDir->mkdir("had"+hadIt->first);
+	    hadDir->cd();
+	    for (auto ratioIt = ratioStrings.begin(); ratioIt != ratioStrings.end(); ratioIt++){
+		formatPlot1D(maxTower1DHists["maxTowerHOvE"+hOvEIt->first+"Had"+hadIt->first+*ratioIt],jetColour);
+		maxTower1DHists["maxTowerHOvE"+hOvEIt->first+"Had"+hadIt->first+*ratioIt]->Write();
+	    }
+	}
+    }
+}
+bool checkRootFileOk(TFile * tf){
+    gErrorIgnoreLevel=kSysError;
+    // TFile * tf = new TFile(fileName,"READ");
+    bool isOK = false;
+    if (!tf) isOK = false;
+    else if (!(tf->IsZombie() or tf->TestBit(TFile::kRecovered))) isOK = true;
+    // tf->Close();
+    // delete tf;
+    return isOK;
+}
+//main plotting function
+int main(int argc, char *argv[]){
+    TString inFileName;
+    TString outFileName;
+    TString puSelStr;
+    TString singleJetStr;
+    if (argc >= 3){
+	inFileName = argv[1];
+	outFileName = argv[2];
+	if (argc == 4){
+	    puSelStr = argv[3];
+	    singleJetStr = "0";
+	}
+	else if (argc == 5){
+	    puSelStr = argv[3];
+	    singleJetStr = argv[4];
+	}
+	else{
+	    puSelStr = "0";
+	    singleJetStr = "0";
+	}
+    }
+    else{
+	std::cout << "Usage: <inFile> <outFile> <min pu>" << std::endl;
+	return 0;
+    }
+    TFile * inputFile = TFile::Open(argv[1],"READ");
+    if (!checkRootFileOk(inputFile)) 
+    {
+	std::cout << "File " << argv[1] << " is corrupt or doesn't exist!" << std::endl;
+	return 0;
+    }
+    inputFile->Close();
+    doHOvEStudy(argv[1],argv[2],puSelStr,singleJetStr);
+    return 0;
 }
