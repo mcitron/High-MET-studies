@@ -940,12 +940,12 @@ int doHOvEStudy(TString inFileName,TString outFileName, TString puSelStr, TStrin
 		subSystem = argv[7];
 	    }
 	    else {
-		std::cout << "Usage: <inFile> <outFile> <min pu> <rate above singleJet> <gen decay in HCAL> <subsystem>" << std::endl;
+		std::cout << "Usage: <inFile> <outFile> <min pu> <rate above L1 HT> <gen decay in HCAL> <subsystem>" << std::endl;
 		return 0;
 	    }
 	}
 	else{
-	    std::cout << "Usage: <inFile> <outFile> <min pu> <rate above singleJet> <gen decay in HCAL> <subsystem>" << std::endl;
+	    std::cout << "Usage: <inFile> <outFile> <min pu> <rate above L1 HT> <gen decay in HCAL> <subsystem>" << std::endl;
 	    return 0;
 	}
 	TFile * inputFile = TFile::Open(argv[1],"READ");
