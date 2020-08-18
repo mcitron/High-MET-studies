@@ -49,11 +49,11 @@ void formatPlot2D(TH2D* plot2d){
     plot2d->SetStats(false);
 }
 
-int doHOvEStudy(TString inFileName,TString outFileName, TString puSelStr, TString singleJetStr,TString genStr, TString genMatchStr, TString subSystem){
+int doHOvEStudy(TString inFileName,TString outFileName, TString puSelStr, TString rateAboveL1HtStr,TString genStr, TString genMatchStr, TString subSystem){
 
     std::cout << "Running doHOvEStudy.cxx..." << std::endl;
     uint puSel = puSelStr.Atoi();
-    bool rateAboveSingleJet = (singleJetStr.Atoi() > 0);
+    bool rateAboveL1Ht = (rateAboveL1HtStr.Atoi() > 0);
     bool genDecayInHCAL = (genStr.Atoi() > 0);
     bool genMatch = (genMatchStr.Atoi() > 0);
     std::vector<TString> towers;
@@ -67,6 +67,7 @@ int doHOvEStudy(TString inFileName,TString outFileName, TString puSelStr, TStrin
 
     int minTowerForHOvE = 0;
     int maxTowerForHOvE = maxTowerBarrel;
+
     if (subSystem == "barrel"){
     minTowerForHOvE = 0;
     maxTowerForHOvE = maxTowerBarrel;
@@ -159,10 +160,6 @@ int doHOvEStudy(TString inFileName,TString outFileName, TString puSelStr, TStrin
     TH1D* hTowTPETphiE = new TH1D("towerTPETPhiE", "Average tower TP E_{T} vs. iPhi in End cap;iPhi; Average tower TP E_{T}", N_IPHI_BINS, 0., 72.);
     // Jet hists
     TH1D * hJetEt = new TH1D("jetET",";ET;",100,0,1000);
-    // TH1D * hMaxJetEt = new TH1D("maxJetEt",";ET;",100,0,2000);
-    // TH1D * hMaxJetSeedEt = new TH1D("maxJetSeedEt",";ET;",100,0,1000);
-    // TH1D * hMaxJetSeedEm = new TH1D("maxJetSeedEm",";ET;",100,0,1000);
-    // TH1D * hMaxJetSeedHad = new TH1D("maxJetSeedHad",";ET;",100,0,1000);
 
     TH1D * hMaxTowerEt = new TH1D("maxTowerEt",";ET;",100,0,1000);
     TH1D * hMaxTowerEm = new TH1D("maxTowerEm",";ET;",100,0,1000);
@@ -172,22 +169,28 @@ int doHOvEStudy(TString inFileName,TString outFileName, TString puSelStr, TStrin
     TH1D * hHtSumManual30 = new TH1D("htSumManual30",";ET;",100,0,1000);
     TH1D * hHtSumManual = new TH1D("htSumManual",";ET;",100,0,1000);
 
+    TH2D * decayHist2DDenom = new TH2D("decayHist2DDenom",";z;R",20,-1000,1000,120,0,600);
+    TH2D * decayHist2DNumHighDepth = new TH2D("decayHist2DNumHighDepth",";z;R",20,-1000,1000,120,0,600);
+    TH2D * decayHist2DNumHighHE = new TH2D("decayHist2DNumHighHE",";z;R",20,-1000,1000,120,0,600);
+    //Notation here is HXOvEY where X is number of towers used to calculate total HCAL energy (and depth info) and Y is 
+    // numbber of towers used to calculate total ECAL energy
     std::vector<TString> ratioStrings = {"HOvE","HOvE3","HOvE9","H3OvE9","H3OvE3","H9OvE9"};
     std::map<const TString, TH2D*> maxJet2DHists;
     std::map<const TString, TH1D*> maxTower1DHists;
     std::map<const TString, TH2D*> maxTower2DHists;
-    // std::map<const TString, TH1D*> maxJet1DHists;
     std::map<const TString, TH1D*> allTower1DHists;
     std::map<const TString, TH1D*> maxJet1DHists;
 
     std::map<const TString, double> hOvEThresholds;
     hOvEThresholds["None"] = -100;
+    //Cuts are on log of H/E
     hOvEThresholds["5"] = 0.699;
     hOvEThresholds["10"] = 1;
     hOvEThresholds["20"] = 1.30;
     hOvEThresholds["100"] = 2;
     hOvEThresholds["Inf"] = 4;
     std::map<const TString, double> hadThresholds;
+    //Cuts on high depth energy 
     hadThresholds["None"] = -100;
     hadThresholds["10"] = 10;
     hadThresholds["20"] = 20;
@@ -217,6 +220,7 @@ int doHOvEStudy(TString inFileName,TString outFileName, TString puSelStr, TStrin
 		maxJet1DHists["maxJetDenomTiming"+hOvEIt->first+"Had"+hadIt->first+*ratioIt] = new TH1D("maxJetDenomTiming"+hOvEIt->first+"Had"+hadIt->first+*ratioIt,";Depth;",300,-30,30);
 		maxJet1DHists["maxJetDenomIt"+hOvEIt->first+"Had"+hadIt->first+*ratioIt] = new TH1D("maxJetDenomIt"+hOvEIt->first+"Had"+hadIt->first+*ratioIt,";Depth;",100,0,10);
 		maxJet1DHists["maxJetDenomHigh"+hOvEIt->first+"Had"+hadIt->first+*ratioIt] = new TH1D("maxJetDenomHigh"+hOvEIt->first+"Had"+hadIt->first+*ratioIt,";Depth;",100,0,100);
+		maxJet1DHists["maxJetDenomLow"+hOvEIt->first+"Had"+hadIt->first+*ratioIt] = new TH1D("maxJetDenomLow"+hOvEIt->first+"Had"+hadIt->first+*ratioIt,";Depth;",100,0,100);
 		maxJet1DHists["maxJetTotalHad"+hOvEIt->first+"Had"+hadIt->first+*ratioIt] = new TH1D("maxJetTotalHad"+hOvEIt->first+"Had"+hadIt->first+*ratioIt,";Depth;",100,0,100);
 		maxJet1DHists["minJetEcal"+hOvEIt->first+"Had"+hadIt->first+*ratioIt] = new TH1D("minJetEcal"+hOvEIt->first+"Had"+hadIt->first+*ratioIt,";Depth;",100,0,100);
 		maxJet1DHists["minJetLowDepth"+hOvEIt->first+"Had"+hadIt->first+*ratioIt] = new TH1D("minJetLowDepth"+hOvEIt->first+"Had"+hadIt->first+*ratioIt,";Depth;",100,0,100);
@@ -311,47 +315,38 @@ int doHOvEStudy(TString inFileName,TString outFileName, TString puSelStr, TStrin
 	    if( l1emu_->sumBx[c] != 0 ) continue;
 	    if( l1emu_->sumType[c] == L1Analysis::kTotalHt ) htSum = l1emu_->sumEt[c];
 	}
-	hHtSum->Fill(htSum);
 	
 	// // gen stuff
 	bool decayInHCAL = false;
 	std::vector<int> genMatchId;
+	genMatchId.clear();
 	if (genDecayInHCAL){
+	    //Make requirement that LLP decays in barrel or endcap or either (depending on subsystem of interest)
 	    nPart = l1gen_->nPart;
 	    for(uint partIt = 0; partIt < nPart; ++partIt){
 		if (abs(l1gen_->partId[partIt]) == 5 && (abs(l1gen_->partParent[partIt]) == 6000113 || abs(l1gen_->partParent[partIt]) == 9000007) || abs(l1gen_->partParent[partIt]) == 9000006) {
 		    double hcalRadius = TMath::Sqrt(l1gen_->partVx[partIt]*l1gen_->partVx[partIt]+l1gen_->partVy[partIt]*l1gen_->partVy[partIt]);
-		    if (minTowerForHOvE <= maxTowerBarrel && hcalRadius > 180 && hcalRadius < 270 && abs(l1gen_->partVz[partIt]) < 390) decayInHCAL = true;
-		    if (maxTowerForHOvE >= maxTowerBarrel+1 && hcalRadius > 44 && hcalRadius < 270 && abs(l1gen_->partVz[partIt]) > 390 && abs(l1gen_->partVz[partIt]) < 568) decayInHCAL = true;
-		    genMatchId.push_back(partIt);
+		    if (minTowerForHOvE <= maxTowerBarrel && hcalRadius > 180 && hcalRadius < 270 && fabs(l1gen_->partVz[partIt]) < 390) {decayInHCAL = true; genMatchId.push_back(partIt);}
+		    if (maxTowerForHOvE >= maxTowerBarrel+1 && hcalRadius > 44 && hcalRadius < 270 && fabs(l1gen_->partVz[partIt]) > 390 && fabs(l1gen_->partVz[partIt]) < 568) {decayInHCAL = true; genMatchId.push_back(partIt);}
 		}
 	    }
 	}
-	if (!decayInHCAL && genDecayInHCAL) continue;
-	nTotHist->Fill(2.5);
-	if (rateAboveSingleJet){
-	    double maxPt = -1;
-	    double secondPt = -1;
-	    for (uint jetIt = 0; jetIt < nJetemu; ++jetIt){
-		seedTowerIPhi = l1emu_->jetTowerIPhi[jetIt];
-		// std::cout << seedTowerIPhi << std::endl;
-		seedTowerIEta = l1emu_->jetTowerIEta[jetIt];
-		// if (abs(seedTowerIEta) <= maxTowerForHOvE && abs(seedTowerIEta) >= minTowerForHOvE){
-		if (abs(seedTowerIEta) <= maxTowerEndcap){
-		    if (secondPt < l1emu_->jetEt[jetIt]) secondPt = l1emu_->jetEt[jetIt];
-		    if (secondPt > maxPt) {
-			secondPt = maxPt;
-			maxPt = l1emu_->jetEt[jetIt];
-		    }
-		}
+	if (genMatchId.size() == 2) {
+	    decayHist2DDenom->Fill(l1gen_->partVz[genMatchId[0]],TMath::Sqrt(l1gen_->partVx[genMatchId[0]]*l1gen_->partVx[genMatchId[0]]+l1gen_->partVy[genMatchId[0]]*l1gen_->partVy[genMatchId[0]]));
 	    }
-	    if (maxPt > 180 || secondPt > 150){
+	if (!decayInHCAL && genDecayInHCAL) continue;
+	hHtSum->Fill(htSum);
+	nTotHist->Fill(2.5);
+	//Ignore events triggered by L1 HT
+	if (rateAboveL1Ht){
+	    if (htSum > 360){
 		continue;
 	    }
 	}
 
 	double htSumManual = 0;
 	double htSumManual30 = 0;
+	//Fill details for jets in the event based on towers around the seed 
 	for (uint jetIt = 0; jetIt < nJetemu; ++jetIt){
 	    hJetEt->Fill(l1emu_->jetEt[jetIt]);
 	    seedTowerIPhi = l1emu_->jetTowerIPhi[jetIt];
@@ -399,18 +394,21 @@ int doHOvEStudy(TString inFileName,TString outFileName, TString puSelStr, TStrin
 		    hcalTPTiming[4] = l1CaloTPemu_->hcalTPtiming5[HcalTPIt];// - exp_time;
 		    hcalTPTiming[5] = l1CaloTPemu_->hcalTPtiming6[HcalTPIt];// - exp_time;
 		    hcalTPTiming[6] = l1CaloTPemu_->hcalTPtiming7[HcalTPIt];// - exp_time;
-		    // std::cout << towHademu << " " <<  hcalTPDepth[0]+hcalTPDepth[1]+hcalTPDepth[2]+hcalTPDepth[3]+hcalTPDepth[4]+hcalTPDepth[5]+hcalTPDepth[6] << std::endl;
+
 		    double weightedTime = 0;
 		    if (towEtaemu == seedTowerIEta && towPhiemu == seedTowerIPhi){
 			seedTowerHad = towHademu;
 			for (int i = 0; i < nDepths-1; i++) depthVarHad[i] = hcalTPDepth[i];
 			for (int i = 0; i < nDepths-1; i++) {
 			    if (depthVarHad[i] > 3){
+				//Also calculate energy weighted time if energy > 3 GeV
 				seedTowerTime += hcalTPDepth[i]*hcalTPTiming[i];
 				seedTowerEForTime += hcalTPDepth[i];
 			    }
 			}
 		    }
+
+		    //Loop up to 9x9 tower area around jet
 		    for (int iSeedTowerIEta = -4; iSeedTowerIEta <= 4; ++iSeedTowerIEta){
 			for (int iSeedTowerIPhi = -4; iSeedTowerIPhi <= 4; ++iSeedTowerIPhi){
 			    int wrappedIPhi = seedTowerIPhi+iSeedTowerIPhi;
@@ -440,6 +438,7 @@ int doHOvEStudy(TString inFileName,TString outFileName, TString puSelStr, TStrin
 		    }
 		}
 	    }
+	    //Finally find ECAL info
 	    for(uint EcalTPIt = 0; EcalTPIt < nECALTPemu; ++EcalTPIt){
 		towEtaemu = l1CaloTPemu_->ecalTPieta[EcalTPIt]; // use for HB HE restrictions                                 
 		towPhiemu = l1CaloTPemu_->ecalTPCaliphi[EcalTPIt];  // hcalTPiphi[HcalTPIt]; // use for deltaR calculation
@@ -508,11 +507,12 @@ int doHOvEStudy(TString inFileName,TString outFileName, TString puSelStr, TStrin
 	//     hMaxJetEt->Fill(l1emu_->jetEt[0]);
 	// }
 
-	// Max tower stuff
+	// Max tower stuff (i.e. find and fill details for depth and HCAL/ECAL energy around "max tower" in the event)
 	std::vector<double> depthVarTowerHad(7,0);
 	std::vector<double> depthVarTower3x3Had(7,0); 
 	std::vector<double> depthVarTower9x9Had(7,0);
 	bool foundMax = false;
+	//First find max tower (also require to have high depth energy > 10)
 	for(uint HcalTPIt = 0; HcalTPIt < nHCALTPemu; ++HcalTPIt){
 	    towEtaemu = l1CaloTPemu_->hcalTPieta[HcalTPIt]; // use for HB HE restrictions                                 
 	    towPhiemu = l1CaloTPemu_->hcalTPCaliphi[HcalTPIt];  // hcalTPiphi[HcalTPIt]; // use for deltaR calculation
@@ -538,7 +538,7 @@ int doHOvEStudy(TString inFileName,TString outFileName, TString puSelStr, TStrin
 		}
 	    }
 	}
-
+	//Now fill details of HCAL/ECAL/depth in area around max tower
 	for(uint HcalTPIt = 0; HcalTPIt < nHCALTPemu; ++HcalTPIt){
 	    towEtaemu = l1CaloTPemu_->hcalTPieta[HcalTPIt]; // use for HB HE restrictions                                 
 	    towPhiemu = l1CaloTPemu_->hcalTPCaliphi[HcalTPIt];  // hcalTPiphi[HcalTPIt]; // use for deltaR calculation
@@ -576,6 +576,7 @@ int doHOvEStudy(TString inFileName,TString outFileName, TString puSelStr, TStrin
 	    }
 	}
 	if (maxTowerHad > 0){
+	    //ECAL stuff (only filled if tower found)
 	    for(uint EcalTPIt = 0; EcalTPIt < nECALTPemu; ++EcalTPIt){
 		towEtaemu = l1CaloTPemu_->ecalTPieta[EcalTPIt]; // use for HB HE restrictions                                 
 		towPhiemu = l1CaloTPemu_->ecalTPCaliphi[EcalTPIt];  // ecalTPiphi[EcalTPIt]; // use for deltaR calculation
@@ -631,10 +632,10 @@ int doHOvEStudy(TString inFileName,TString outFileName, TString puSelStr, TStrin
 	    if (hadVariablesMaxTower[*ratioIt] == 0) ratioTower = -10.1;
 	    else if (emVariablesMaxTower[*ratioIt] == 0) ratioTower = 10.1;
 	    if (hadVariablesMaxTower[*ratioIt] > 0) ratioTower = TMath::Log10(hadVariablesMaxTower[*ratioIt]/emVariablesMaxTower[*ratioIt]);
-
 	    maxTower2DHists["maxTower"+*ratioIt]->Fill(hadVariablesMaxTower[*ratioIt],ratioTower);
 	    for (auto hOvEIt = hOvEThresholds.begin(); hOvEIt != hOvEThresholds.end(); hOvEIt++){
 		for (auto hadIt = hadThresholds.begin(); hadIt != hadThresholds.end(); hadIt++){
+		    //First fill details of maximum tower in the event (not currently used for studies)
 		    if (foundMax){
 			if (ratioTower >= hOvEIt->second && hadVariablesMaxTower[*ratioIt] >= hadIt->second){
 			    maxTower1DHists["maxTowerHOvE"+hOvEIt->first+"Had"+hadIt->first+*ratioIt]->Fill(ratioTower);
@@ -647,27 +648,33 @@ int doHOvEStudy(TString inFileName,TString outFileName, TString puSelStr, TStrin
 			    }
 			}
 		    }
+		    //Fill details for jets
 		    double maxPt = -1;
 		    double maxRatio = -100;
 		    int maxEta = -1;
 		    int maxPhi = -1;
 		    int foundJet = -1;
+		    int foundJetPt = -1;
 		    double maxDenom = -1;
 		    double maxDenomHigh = -1;
+		    double maxDenomLow = -1;
 		    double maxHad = -1;
 		    double ratioJet = -100;
 		    double maxDepthRatio = 0;
 		    double minEcal = 1E6;
 		    double minLowDepth = 1E6;
 		    int nJetPassSel = 0;
+		    //Loop over jets and fill hists with different selections on high depth and H/E
 		    for (uint jetIt = 0; jetIt < nJetemu; ++jetIt){
 			seedTowerIPhi = l1emu_->jetTowerIPhi[jetIt];
 			seedTowerIEta = l1emu_->jetTowerIEta[jetIt];
+			//ratioJet is log10 of H/E
 			if (hadVariablesAllJets[*ratioIt][jetIt] == 0) ratioJet = -10.1;
 			else if (emVariablesAllJets[*ratioIt][jetIt] == 0) ratioJet = 10.1;
 			else ratioJet = TMath::Log10(hadVariablesAllJets[*ratioIt][jetIt]/emVariablesAllJets[*ratioIt][jetIt]);
 			double denom = depthVariablesAllJets[*ratioIt][jetIt][2]+depthVariablesAllJets[*ratioIt][jetIt][3]+depthVariablesAllJets[*ratioIt][jetIt][4]+depthVariablesAllJets[*ratioIt][jetIt][5]+depthVariablesAllJets[*ratioIt][jetIt][6];
 			double denomHigh = depthVariablesAllJets[*ratioIt][jetIt][3]+depthVariablesAllJets[*ratioIt][jetIt][4]+depthVariablesAllJets[*ratioIt][jetIt][5]+depthVariablesAllJets[*ratioIt][jetIt][6];
+			double denomLow = depthVariablesAllJets[*ratioIt][jetIt][1]+depthVariablesAllJets[*ratioIt][jetIt][2]+depthVariablesAllJets[*ratioIt][jetIt][4]+depthVariablesAllJets[*ratioIt][jetIt][5]+depthVariablesAllJets[*ratioIt][jetIt][6];
 			double total = denom + depthVariablesAllJets[*ratioIt][jetIt][0] + depthVariablesAllJets[*ratioIt][jetIt][1];
 			double depthRatio;
 
@@ -675,20 +682,23 @@ int doHOvEStudy(TString inFileName,TString outFileName, TString puSelStr, TStrin
 			else depthRatio = denom/total;
 
 			double ecal = emVariablesAllJets[*ratioIt][jetIt];
-
+			//Requirements on eta, H/E and depth (called denom here for no good reason)
 			if (abs(seedTowerIEta) <= maxTowerForHOvE && abs(seedTowerIEta) >= minTowerForHOvE && ratioJet >= hOvEIt->second && denom >= hadIt->second){
-			// if (abs(seedTowerIEta) <= maxTowerForHOvE && abs(seedTowerIEta) >= minTowerForHOvE && ratioJet >= hOvEIt->second && hadVariablesAllJets[*ratioIt][jetIt] >= hadIt->second){
 			    nJetPassSel++;
 			    if (maxPt < l1emu_->jetEt[jetIt]) {
 				maxPt = l1emu_->jetEt[jetIt];
 				maxPhi = seedTowerIPhi;
 				maxEta = seedTowerIEta;
+				foundJetPt = jetIt;
 			    }
 			    if (maxRatio < ratioJet){
 				maxRatio = ratioJet;
 			    }
 			    if (maxDenomHigh < denomHigh){
 				maxDenomHigh = denomHigh;
+			    }
+			    if (maxDenomLow < denomLow){
+				maxDenomLow = denomLow;
 			    }
 			    if (maxDenom < denom){
 				foundJet = jetIt;
@@ -710,17 +720,12 @@ int doHOvEStudy(TString inFileName,TString outFileName, TString puSelStr, TStrin
 		    }
 			maxJet1DHists["nJetPassSel"+hOvEIt->first+"Had"+hadIt->first+*ratioIt]->Fill(nJetPassSel);
 		    if (foundJet >= 0){
-			// if (maxDenom > 30 && hadIt->first == "None" && hOvEIt->first == "None" && maxPt > 0 && *ratioIt=="H3OvE3"){
-			//     std::cout << "Decay in HCAL " << decayInHCAL << std::endl;
-			//     for (auto partIt :genMatchId){
-			// 	std::cout << "Radius: " << TMath::Sqrt(l1gen_->partVx[partIt]*l1gen_->partVx[partIt]+l1gen_->partVy[partIt]*l1gen_->partVy[partIt]) << "Z: " << l1gen_->partVz[partIt] << std::endl;
-			//     }
-			// 	std::cout << "HCAL Barrel radius/Z: 180-270, Z < 390 HCAL Endcap radius/Z: 44-270, Z > 390" << std::endl;
-			//     std::cout << std::endl;
-			// }
+			//If there's at least one jet passing selection fill hists!
+			//Use jet with highest high depth energy that passes selection
 			maxJet1DHists["maxJetDenom"+hOvEIt->first+"Had"+hadIt->first+*ratioIt]->Fill(maxDenom);
 			maxJet1DHists["maxJetDenomIt"+hOvEIt->first+"Had"+hadIt->first+*ratioIt]->Fill(foundJet);
 			maxJet1DHists["maxJetDenomHigh"+hOvEIt->first+"Had"+hadIt->first+*ratioIt]->Fill(maxDenomHigh);
+			maxJet1DHists["maxJetDenomLow"+hOvEIt->first+"Had"+hadIt->first+*ratioIt]->Fill(maxDenomLow);
 			maxJet1DHists["maxJetTotalHad"+hOvEIt->first+"Had"+hadIt->first+*ratioIt]->Fill(maxHad);
 			maxJet1DHists["minJetEcal"+hOvEIt->first+"Had"+hadIt->first+*ratioIt]->Fill(minEcal);
 			maxJet1DHists["minJetLowDepth"+hOvEIt->first+"Had"+hadIt->first+*ratioIt]->Fill(minLowDepth);
@@ -739,6 +744,8 @@ int doHOvEStudy(TString inFileName,TString outFileName, TString puSelStr, TStrin
 			if (maxPt > 0) maxJet1DHists["maxJetPt"+hOvEIt->first+"Had"+hadIt->first+*ratioIt]->Fill(maxPt);
 			if (maxRatio > -100) maxJet1DHists["maxJetHOvE"+hOvEIt->first+"Had"+hadIt->first+*ratioIt]->Fill(maxRatio);
 			if (hadIt->first == "30" && hOvEIt->first == "Inf" && maxPt > 0) maxJetEtaPhi->Fill(maxEta,maxPhi);
+			if (hadIt->first == "30" && hOvEIt->first == "None"  && *ratioIt == "H3OvE3" && genMatchId.size() == 2) decayHist2DNumHighDepth->Fill(l1gen_->partVz[genMatchId[0]],TMath::Sqrt(l1gen_->partVx[genMatchId[0]]*l1gen_->partVx[genMatchId[0]]+l1gen_->partVy[genMatchId[0]]*l1gen_->partVy[genMatchId[0]]));
+			if (hadIt->first == "None" && hOvEIt->first == "10"  && *ratioIt == "H3OvE3" && genMatchId.size() == 2 && maxPt > 80) decayHist2DNumHighHE->Fill(l1gen_->partVz[genMatchId[0]],TMath::Sqrt(l1gen_->partVx[genMatchId[0]]*l1gen_->partVx[genMatchId[0]]+l1gen_->partVy[genMatchId[0]]*l1gen_->partVy[genMatchId[0]]));
 		    }
 
 		}
@@ -757,6 +764,9 @@ int doHOvEStudy(TString inFileName,TString outFileName, TString puSelStr, TStrin
 	TFile outputFile = TFile(outFileName,"RECREATE");
 	outputFile.cd();
 	nTotHist->Write();
+	decayHist2DNumHighHE->Write();
+	decayHist2DNumHighDepth->Write();
+	decayHist2DDenom->Write();
 	hHtSum->Write();
 	hHtSumManual30->Write();
 	hHtSumManual->Write();
@@ -823,6 +833,12 @@ int doHOvEStudy(TString inFileName,TString outFileName, TString puSelStr, TStrin
 		for (auto ratioIt = ratioStrings.begin(); ratioIt != ratioStrings.end(); ratioIt++){
 		    formatPlot1D(maxJet1DHists["maxJetDenomHigh"+hOvEIt->first+"Had"+hadIt->first+*ratioIt],jetColour);
 		    maxJet1DHists["maxJetDenomHigh"+hOvEIt->first+"Had"+hadIt->first+*ratioIt]->Write();
+		}
+		TDirectory * depthDenomLowDir = hadDir->mkdir("depthDenomLow");
+		depthDenomLowDir->cd();
+		for (auto ratioIt = ratioStrings.begin(); ratioIt != ratioStrings.end(); ratioIt++){
+		    formatPlot1D(maxJet1DHists["maxJetDenomLow"+hOvEIt->first+"Had"+hadIt->first+*ratioIt],jetColour);
+		    maxJet1DHists["maxJetDenomLow"+hOvEIt->first+"Had"+hadIt->first+*ratioIt]->Write();
 		}
 		TDirectory * totalHadDir = hadDir->mkdir("totalHad");
 		totalHadDir->cd();
@@ -891,7 +907,7 @@ int doHOvEStudy(TString inFileName,TString outFileName, TString puSelStr, TStrin
 	TString inFileName;
 	TString outFileName;
 	TString puSelStr;
-	TString singleJetStr = "0";
+	TString rateAboveL1HtStr = "0";
 	TString genDecayInHCALStr = "0";
 	TString genMatchStr = "0";
 	TString subSystem = "barrel";
@@ -903,22 +919,22 @@ int doHOvEStudy(TString inFileName,TString outFileName, TString puSelStr, TStrin
 	    }
 	    else if (argc == 5){
 		puSelStr = argv[3];
-		singleJetStr = argv[4];
+		rateAboveL1HtStr = argv[4];
 	    }
 	    else if (argc == 6){
 		puSelStr = argv[3];
-		singleJetStr = argv[4];
+		rateAboveL1HtStr = argv[4];
 		genDecayInHCALStr = argv[5];
 	    }
 	    else if (argc == 7){
 		puSelStr = argv[3];
-		singleJetStr = argv[4];
+		rateAboveL1HtStr = argv[4];
 		genDecayInHCALStr = argv[5];
 		genMatchStr = argv[6];
 	    }
 	    else if (argc == 8){
 		puSelStr = argv[3];
-		singleJetStr = argv[4];
+		rateAboveL1HtStr = argv[4];
 		genDecayInHCALStr = argv[5];
 		genMatchStr = argv[6];
 		subSystem = argv[7];
@@ -939,6 +955,6 @@ int doHOvEStudy(TString inFileName,TString outFileName, TString puSelStr, TStrin
 	    return 0;
 	}
 	inputFile->Close();
-	doHOvEStudy(argv[1],argv[2],puSelStr,singleJetStr,genDecayInHCALStr,genMatchStr,subSystem);
+	doHOvEStudy(argv[1],argv[2],puSelStr,rateAboveL1HtStr,genDecayInHCALStr,genMatchStr,subSystem);
 	return 0;
     }
