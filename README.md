@@ -1,4 +1,4 @@
-# High-MET-studies
+# H/E studies (forked from original High-MET-studies script from Esh)
 
 Macro for producing (many) plots in high-MET ZeroBias samples. The code can be run with
 
